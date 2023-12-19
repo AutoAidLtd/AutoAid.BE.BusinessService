@@ -12,11 +12,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Item", "Item", "{63726384-0
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoAid.Infrastructure", "AutoAid.Infrastructure\AutoAid.Infrastructure.csproj", "{BF28744F-F86E-42BA-989E-818FCEB653B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoAid.Infrastructure", "AutoAid.Infrastructure\AutoAid.Infrastructure.csproj", "{BF28744F-F86E-42BA-989E-818FCEB653B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoAid.Domain", "AutoAid.Domain\AutoAid.Domain.csproj", "{3F5487F3-9475-445A-9A21-CD6247932B3A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoAid.Domain", "AutoAid.Domain\AutoAid.Domain.csproj", "{3F5487F3-9475-445A-9A21-CD6247932B3A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoAid.Services", "AutoAid.Services\AutoAid.Services.csproj", "{AB8DCDAF-F0B9-4F4C-8416-4C1D66DA5D1D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoAid.Services", "AutoAid.Services\AutoAid.Services.csproj", "{AB8DCDAF-F0B9-4F4C-8416-4C1D66DA5D1D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{7B81D935-25E6-4DB7-A355-FD1315A2DEA8}"
+	ProjectSection(SolutionItems) = preProject
+		..\Database\config-script.txt = ..\Database\config-script.txt
+		..\Database\ddl-script.txt = ..\Database\ddl-script.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
