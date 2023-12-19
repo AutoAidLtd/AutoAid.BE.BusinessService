@@ -1,0 +1,6 @@
+@AutoAid.WebApi_HostAddress = http://localhost:5246
+
+GET {{AutoAid.WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
