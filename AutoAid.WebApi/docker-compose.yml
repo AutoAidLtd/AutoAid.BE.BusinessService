@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  autoaid.webapi:
+    image: ${DOCKER_REGISTRY-}autoaidwebapi
+    build:
+      context: .
+      dockerfile: AutoAid.WebApi/Dockerfile
