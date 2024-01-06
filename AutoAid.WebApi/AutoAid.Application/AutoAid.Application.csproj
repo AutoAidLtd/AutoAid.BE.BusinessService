@@ -10,4 +10,13 @@
     <ProjectReference Include="..\AutoAid.Domain\AutoAid.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Repository\Common\" />
+    <Folder Include="Service\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    
+  </ItemGroup>
+
 </Project>

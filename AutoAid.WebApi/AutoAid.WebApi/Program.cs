@@ -1,4 +1,6 @@
 
+using AutoAid.WebApi.Configs;
+
 namespace AutoAid.WebApi
 {
     public class Program
@@ -10,6 +12,10 @@ namespace AutoAid.WebApi
             // Add services to the container.
 
             builder.Services.AddControllers();
+
+            // Register services to DI 
+            builder.Services.RegisterServices();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

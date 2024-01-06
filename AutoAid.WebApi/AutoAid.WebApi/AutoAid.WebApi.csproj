@@ -17,6 +17,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AutoAid.Application\AutoAid.Application.csproj" />
+    <ProjectReference Include="..\AutoAid.Infrastructure\AutoAid.Infrastructure.csproj" />
+    <ProjectReference Include="..\AutoAid.Services\AutoAid.Services.csproj" />
   </ItemGroup>
 
 </Project>
