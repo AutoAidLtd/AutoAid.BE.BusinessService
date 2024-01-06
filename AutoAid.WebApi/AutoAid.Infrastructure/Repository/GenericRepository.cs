@@ -73,7 +73,7 @@ namespace AutoAid.Infrastructure.Repository
                           .ConfigureAwait(false);
         }
 
-        public async Task<int> AddAsync(TEntity entity, bool isSaveChange = false)
+        public async Task<int> CreateAsync(TEntity entity, bool isSaveChange = false)
         {
             await dbSet.AddAsync(entity)
                        .ConfigureAwait(false);
@@ -87,7 +87,7 @@ namespace AutoAid.Infrastructure.Repository
             return 0;
         }
 
-        public async Task<int> AddRangeAsync(IEnumerable<TEntity> entities, bool isSaveChange = false)
+        public async Task<int> CreateRangeAsync(IEnumerable<TEntity> entities, bool isSaveChange = false)
         {
             await dbSet.AddRangeAsync(entities)
                          .ConfigureAwait(false);

@@ -1,5 +1,4 @@
-
-using AutoAid.WebApi.Configs;
+using AutoAid.WebApi.Configuration;
 
 namespace AutoAid.WebApi
 {
@@ -9,12 +8,14 @@ namespace AutoAid.WebApi
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            // Register appsettings.json global variables
+            builder.Configuration.SettingsBinding();
 
+            // Add services to the container.
             builder.Services.AddControllers();
 
             // Register services to DI 
-            builder.Services.RegisterServices();
+            builder.Services.AddServices();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

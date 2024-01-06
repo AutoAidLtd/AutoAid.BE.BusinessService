@@ -23,14 +23,11 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.0" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
-		<PackageReference Include="EFCore.NamingConventions" Version="7.0.2" />
+		<PackageReference Include="EFCore.NamingConventions" Version="8.0.2" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Folder Include="Common\" />
-	  <Folder Include="Configuration\" />
-	  <Folder Include="DbContext\" />
-	  <Folder Include="Migration\" />
 	</ItemGroup>
 
 </Project>

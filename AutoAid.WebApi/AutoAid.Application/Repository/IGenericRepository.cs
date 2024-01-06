@@ -20,8 +20,8 @@ namespace AutoAid.Application.Repository
         #endregion Query
 
         #region Command 
-        public Task<int> AddAsync(TEntity entity, bool isSaveChange = false);
-        public Task<int> AddRangeAsync(IEnumerable<TEntity> entities, bool isSaveChange = false);
+        public Task<int> CreateAsync(TEntity entity, bool isSaveChange = false);
+        public Task<int> CreateRangeAsync(IEnumerable<TEntity> entities, bool isSaveChange = false);
 
         public Task<bool> UpdateAsync(TEntity entity, bool isSaveChange = false);
         public Task<bool> UpdateRangeAsync(IEnumerable<TEntity> entities, bool isSaveChange = false);

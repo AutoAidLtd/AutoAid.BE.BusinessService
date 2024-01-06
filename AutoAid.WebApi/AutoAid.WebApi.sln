@@ -16,7 +16,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoAid.Infrastructure", "A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoAid.Domain", "AutoAid.Domain\AutoAid.Domain.csproj", "{3F5487F3-9475-445A-9A21-CD6247932B3A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoAid.Services", "AutoAid.Services\AutoAid.Services.csproj", "{AB8DCDAF-F0B9-4F4C-8416-4C1D66DA5D1D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoAid.Bussiness", "AutoAid.Services\AutoAid.Bussiness.csproj", "{AB8DCDAF-F0B9-4F4C-8416-4C1D66DA5D1D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{7B81D935-25E6-4DB7-A355-FD1315A2DEA8}"
 	ProjectSection(SolutionItems) = preProject
