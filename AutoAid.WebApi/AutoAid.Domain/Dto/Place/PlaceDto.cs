@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AutoAid.Domain.Dto.Place
 {
-    public class PlaceRes
+    public class PlaceDto
     {
         public double Lat { get; set; }
         public double Lng { get; set; }

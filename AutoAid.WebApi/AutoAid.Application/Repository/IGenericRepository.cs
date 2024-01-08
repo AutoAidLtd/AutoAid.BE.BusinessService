@@ -12,7 +12,7 @@ namespace AutoAid.Application.Repository
         public Task<IEnumerable<TEntity>?> FindRangeAsync(Expression<Func<TEntity, bool>> filter);
 
         public Task<TEntity?> GetAsync(QueryHelper<TEntity> queryHelper);
-        public Task<TSource?> GetAsync<TSource>(QueryHelper<TEntity, TSource> queryHelper) where TSource : class;
+        public Task<TResult?> GetAsync<TResult>(QueryHelper<TEntity, TResult> queryHelper) where TResult : class;
 
         public Task<IPagedList<TEntity>?> SearchAsync(SearchQueryHelper<TEntity> queryHelper);
         public Task<IPagedList<TResult>?> SearchAsync<TResult>(SearchQueryHelper<TEntity, TResult> queryHelper) where TResult : class;

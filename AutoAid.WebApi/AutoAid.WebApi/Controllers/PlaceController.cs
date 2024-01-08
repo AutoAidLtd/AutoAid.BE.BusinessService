@@ -1,4 +1,5 @@
 ﻿using AutoAid.Application.Service;
+using AutoAid.Domain.Dto.Place;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AutoAid.WebApi.Controllers
@@ -15,9 +16,10 @@ namespace AutoAid.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreatePlace()
+        [ProducesDefaultResponseType(typeof(bool))]
+        public async Task<IActionResult> CreatePlace(CreatePlaceDto createData)
         {
-            var result = await _placeService.Create(lat, lng);
+            var result = await _placeService.Create(createData);
             return Ok(result);
         }
     }

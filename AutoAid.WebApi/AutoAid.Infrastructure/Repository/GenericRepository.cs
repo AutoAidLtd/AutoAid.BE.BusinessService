@@ -54,7 +54,7 @@ namespace AutoAid.Infrastructure.Repository
         {
             var queryable = dbSet.ToQueryable(queryHelper);
             var pagedList = new PagedList<TEntity>();
-            await pagedList.LoadData(queryable, queryHelper.PagingQuery);
+            await pagedList.LoadData(queryable, queryHelper.PagingQuery).ConfigureAwait(false);
             return pagedList;
         }
 
@@ -62,7 +62,7 @@ namespace AutoAid.Infrastructure.Repository
         {
             var queryable = dbSet.ToQueryable(queryHelper);
             var pagedList = new PagedList<TResult>();
-            await pagedList.LoadData(queryable, queryHelper.PagingQuery);
+            await pagedList.LoadData(queryable, queryHelper.PagingQuery).ConfigureAwait(false);
             return pagedList;
         }
 

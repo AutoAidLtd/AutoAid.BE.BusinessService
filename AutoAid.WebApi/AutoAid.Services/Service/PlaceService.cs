@@ -1,6 +1,7 @@
 ﻿using AutoAid.Application.Repository;
 using AutoAid.Application.Service;
 using AutoAid.Bussiness.Common;
+using AutoAid.Domain.Dto.Place;
 using AutoAid.Infrastructure.Models;
 
 namespace AutoAid.Bussiness.Service
@@ -11,14 +12,14 @@ namespace AutoAid.Bussiness.Service
         {
         }
 
-        public async Task<bool> Create(double lat, double lng)
+        public async Task<bool> Create(CreatePlaceDto createData)
         {
             try
             {
-                var result = await _unitOfWork.GetRepository<Place>().CreateAsync(new Place
+                var result = await _unitOfWork.Resolve<Place>().CreateAsync(new Place
                 {
-                    Lat = lat,
-                    Lng = lng
+                    Lat = createData.Lat,
+                    Lng = createData.Lng,
                 }, isSaveChange: true);
 
                 return result > 0;

@@ -7,13 +7,13 @@ namespace AutoAid.Infrastructure.Repository;
 public class UnitOfWork : IUnitOfWork
 {
     private readonly DbContext _dbContext;
-    private readonly Dictionary<Type, object> _repositoryDictionary;
+    private readonly Dictionary<string, object> _repositoryDictionary;
     private IDbContextTransaction? transaction;
 
     public UnitOfWork(DbContext dbContext)
     {
         _dbContext = dbContext;
-        _repositoryDictionary = new Dictionary<Type, object>();
+        _repositoryDictionary = new Dictionary<string, object>();
     }
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -21,22 +21,22 @@ public class UnitOfWork : IUnitOfWork
         return await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task BeginTransactionAsync()
+    public async Task BeginTransactionAsync(CancellationToken cancellationToken = default)
     {
         if (transaction != null)
             throw new InvalidOperationException("Transaction has already been started.");
 
-        transaction = await _dbContext.Database.BeginTransactionAsync();
+        transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
     }
 
-    public async Task CommitTransactionAsync()
+    public async Task CommitTransactionAsync(CancellationToken cancellationToken = default)
     {
         try
         {
             if (transaction == null)
                 throw new InvalidOperationException("Transaction has not been started.");
 
-            await transaction.CommitAsync();
+            await transaction.CommitAsync(cancellationToken);
         }
         catch
         {
@@ -45,30 +45,31 @@ public class UnitOfWork : IUnitOfWork
         }
     }
 
-    public async Task RollbackTransactionAsync()
+    public async Task RollbackTransactionAsync(CancellationToken cancellationToken = default)
     {
         if (transaction == null)
             throw new InvalidOperationException("Transaction has not been started.");
 
-        await transaction.RollbackAsync();
+        await transaction.RollbackAsync(cancellationToken);
     }
 
-    public IGenericRepository<TEntity> GetRepository<TEntity>() where TEntity : class
+    public IGenericRepository<TEntity> Resolve<TEntity>()
+        where TEntity : class
     {
-        var respository = _repositoryDictionary.GetValueOrDefault(typeof(TEntity));
+        var respository = _repositoryDictionary.GetValueOrDefault(typeof(TEntity).Name);
         if (respository == null)
         {
             respository = new GenericRepository<TEntity>(_dbContext);
-            _repositoryDictionary.Add(typeof(TEntity), respository);
+            _repositoryDictionary.Add(typeof(TEntity).Name, respository);
         }
         return (IGenericRepository<TEntity>)respository;
     }
 
-    public TEntityRepository? GetRepository<TEntityRepository, TEntity>()
+    public TEntityRepository? Resolve<TEntity, TEntityRepository>()
         where TEntity : class
         where TEntityRepository : IGenericRepository<TEntity>
     {
-        var respository = _repositoryDictionary.GetValueOrDefault(typeof(TEntity));
+        var respository = _repositoryDictionary.GetValueOrDefault(typeof(TEntity).Name);
 
         if (respository == null)
         {
@@ -77,7 +78,7 @@ public class UnitOfWork : IUnitOfWork
             if (respository == null)
                 return default;
 
-            _repositoryDictionary.Add(typeof(TEntity), respository);
+            _repositoryDictionary.Add(typeof(TEntity).Name, respository);
         }
 
         return (TEntityRepository)respository;
