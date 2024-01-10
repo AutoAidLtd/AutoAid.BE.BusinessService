@@ -1,8 +1,10 @@
 ﻿using AutoAid.Application.Repository;
 using AutoAid.Application.Service;
 using AutoAid.Bussiness.Common;
+using AutoAid.Domain.Common;
 using AutoAid.Domain.Dto.Place;
 using AutoAid.Infrastructure.Models;
+using AutoAid.Infrastructure.Repository.Helper;
 
 namespace AutoAid.Bussiness.Service
 {
@@ -16,18 +18,31 @@ namespace AutoAid.Bussiness.Service
         {
             try
             {
-                var result = await _unitOfWork.Resolve<Place>().CreateAsync(new Place
+                await _unitOfWork.Resolve<Place>().CreateAsync(new Place
                 {
                     Lat = createData.Lat,
                     Lng = createData.Lng,
-                }, isSaveChange: true);
+                });
 
-                return result > 0;
+                return await _unitOfWork.SaveChangesAsync() > 0;
             }
             catch (Exception)
             {
-
                 return false;
+            }
+        }
+
+        public async Task<IPagedList<PlaceDto>> SearchPlace(string keySearch, PagingQuery paginQuery, string orderbyString)
+        {
+            try
+            {
+                var result = await _unitOfWork.Resolve<Place>()
+                                              .SearchAsync<PlaceDto>(keySearch, paginQuery, orderbyString);
+                return result;
+            }
+            catch (Exception)
+            {
+                return null;
             }
         }
     }

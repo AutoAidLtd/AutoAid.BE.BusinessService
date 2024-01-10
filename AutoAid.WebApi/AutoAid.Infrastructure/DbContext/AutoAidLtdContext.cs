@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using AutoAid.Domain.Common;
-using AutoAid.Infrastructure.Models;
+﻿using AutoAid.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace AutoAid.Infrastructure.DbContexts;

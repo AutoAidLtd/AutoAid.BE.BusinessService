@@ -1,6 +1,7 @@
 ﻿using AutoAid.Application.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using System.Reflection;
 
 namespace AutoAid.Infrastructure.Repository;
 
@@ -59,7 +60,13 @@ public class UnitOfWork : IUnitOfWork
         var respository = _repositoryDictionary.GetValueOrDefault(typeof(TEntity).Name);
         if (respository == null)
         {
-            respository = new GenericRepository<TEntity>(_dbContext);
+            var interfaceType = GetTypeInterfaceImplementingGenericInterface(typeof(IGenericRepository<TEntity>));
+            var classType = GetClassImplementingInterface(interfaceType);
+
+            respository = Activator.CreateInstance(classType, _dbContext);
+
+            ArgumentNullException.ThrowIfNull(respository, $"Cannot create instance of repository {classType.Name}");
+
             _repositoryDictionary.Add(typeof(TEntity).Name, respository);
         }
         return (IGenericRepository<TEntity>)respository;
@@ -73,15 +80,33 @@ public class UnitOfWork : IUnitOfWork
 
         if (respository == null)
         {
-            respository = Activator.CreateInstance(typeof(TEntityRepository), _dbContext);
+            if (typeof(TEntityRepository).IsInterface)
+            {
+                var classRepository = GetClassImplementingInterface(typeof(TEntityRepository));
+                respository = Activator.CreateInstance(classRepository, _dbContext);
+            }
 
-            if (respository == null)
-                return default;
+            ArgumentNullException.ThrowIfNull(respository, $"Cannot create instance of repository {typeof(TEntityRepository).Name}");
 
             _repositoryDictionary.Add(typeof(TEntity).Name, respository);
         }
 
         return (TEntityRepository)respository;
+    }
+
+    private Type GetTypeInterfaceImplementingGenericInterface(Type interfaceType)
+    {
+        return Assembly.GetExecutingAssembly()
+            .GetTypes()
+            .First(type => type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == interfaceType)
+                            && type.IsInterface);
+    }
+
+    private Type GetClassImplementingInterface(Type interfaceType)
+    {
+        return Assembly.GetExecutingAssembly()
+            .GetTypes()
+            .First(type => type.IsClass && type.IsInstanceOfType(interfaceType));
     }
 
     #region Destructor

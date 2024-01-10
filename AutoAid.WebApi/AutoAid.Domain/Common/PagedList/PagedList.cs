@@ -63,7 +63,7 @@ namespace AutoAid.Domain.Common.PagedList
             AddRange(items);
         }
 
-        public async Task LoadData(IQueryable<TEntity> queryList, PagingQuery paginationParams)
+        public async Task LoadDataAsync(IQueryable<TEntity> queryList, PagingQuery paginationParams)
         {
             if (paginationParams == null)
             {
