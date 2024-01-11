@@ -44,27 +44,18 @@ namespace AutoAid.Infrastructure.Repository
 
         public async Task CreateAsync(params TEntity[] entities)
         {
-            if (_dbContext.Database.CurrentTransaction == null)
-                await _dbContext.Database.BeginTransactionAsync();
-
             await dbSet.AddRangeAsync(entities)
                      .ConfigureAwait(false);
         }
 
         public async Task UpdateAsync(params TEntity[] entities)
         {
-            if (_dbContext.Database.CurrentTransaction == null)
-                await _dbContext.Database.BeginTransactionAsync();
-
             dbSet.UpdateRange(entities);
             await Task.CompletedTask;
         }
 
         public async Task DeleteAsync(params int[] ids)
         {
-            if (_dbContext.Database.CurrentTransaction == null)
-                await _dbContext.Database.BeginTransactionAsync();
-
             var accessPropertyDelegate = EFRepositoryHelpers.GenerateAccessPropertyDelegate<TEntity, bool>(typeof(TEntity), "IsDeleted");
             var idsString = string.Join(",", ids);
             var condition = $"e.{EFRepositoryHelpers.GetPrimaryKeyName<TEntity>()}=ANY([{idsString}])";

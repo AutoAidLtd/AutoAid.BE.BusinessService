@@ -60,8 +60,7 @@ public class UnitOfWork : IUnitOfWork
         var respository = _repositoryDictionary.GetValueOrDefault(typeof(TEntity).Name);
         if (respository == null)
         {
-            var interfaceType = GetTypeInterfaceImplementingGenericInterface(typeof(IGenericRepository<TEntity>));
-            var classType = GetClassImplementingInterface(interfaceType);
+            var classType = GetClassImplementingInterface(typeof(IGenericRepository<TEntity>));
 
             respository = Activator.CreateInstance(classType, _dbContext);
 
@@ -74,7 +73,7 @@ public class UnitOfWork : IUnitOfWork
 
     public TEntityRepository? Resolve<TEntity, TEntityRepository>()
         where TEntity : class
-        where TEntityRepository : IGenericRepository<TEntity>
+        where TEntityRepository : IGenericRepository<TEntity> 
     {
         var respository = _repositoryDictionary.GetValueOrDefault(typeof(TEntity).Name);
 
@@ -85,6 +84,10 @@ public class UnitOfWork : IUnitOfWork
                 var classRepository = GetClassImplementingInterface(typeof(TEntityRepository));
                 respository = Activator.CreateInstance(classRepository, _dbContext);
             }
+            else
+            {
+                respository = Activator.CreateInstance(typeof(TEntityRepository), _dbContext);
+            }
 
             ArgumentNullException.ThrowIfNull(respository, $"Cannot create instance of repository {typeof(TEntityRepository).Name}");
 
@@ -94,19 +97,15 @@ public class UnitOfWork : IUnitOfWork
         return (TEntityRepository)respository;
     }
 
-    private Type GetTypeInterfaceImplementingGenericInterface(Type interfaceType)
-    {
-        return Assembly.GetExecutingAssembly()
-            .GetTypes()
-            .First(type => type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == interfaceType)
-                            && type.IsInterface);
-    }
-
     private Type GetClassImplementingInterface(Type interfaceType)
     {
-        return Assembly.GetExecutingAssembly()
-            .GetTypes()
-            .First(type => type.IsClass && type.IsInstanceOfType(interfaceType));
+        var genericType = interfaceType.GenericTypeArguments.First();
+
+        return Assembly.GetExecutingAssembly().GetTypes()
+                                .First(t => t.IsClass == true && t.IsAbstract == false
+                                        && (t.GetInterface(interfaceType.Name)
+                                            ?.GetGenericArguments()
+                                            ?.Any(a => a.Name == genericType.Name) ?? false));
     }
 
     #region Destructor
