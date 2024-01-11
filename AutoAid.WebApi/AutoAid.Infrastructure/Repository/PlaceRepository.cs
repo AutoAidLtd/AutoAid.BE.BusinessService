@@ -1,5 +1,6 @@
 ﻿using AutoAid.Domain.Common;
-using AutoAid.Infrastructure.Models;
+using AutoAid.Domain.Common.PagedList;
+using AutoAid.Domain.Models;
 using AutoAid.Infrastructure.Repository.Helper;
 using Microsoft.EntityFrameworkCore;
 

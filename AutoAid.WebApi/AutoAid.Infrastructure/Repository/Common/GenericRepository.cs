@@ -1,5 +1,6 @@
 ﻿using AutoAid.Application.Repository;
 using AutoAid.Domain.Common;
+using AutoAid.Domain.Common.PagedList;
 using AutoAid.Infrastructure.Repository.Helper;
 using Microsoft.EntityFrameworkCore;
 
@@ -45,7 +46,7 @@ namespace AutoAid.Infrastructure.Repository
         public async Task CreateAsync(params TEntity[] entities)
         {
             await dbSet.AddRangeAsync(entities)
-                     .ConfigureAwait(false);
+                       .ConfigureAwait(false);
         }
 
         public async Task UpdateAsync(params TEntity[] entities)
@@ -61,7 +62,7 @@ namespace AutoAid.Infrastructure.Repository
             var condition = $"e.{EFRepositoryHelpers.GetPrimaryKeyName<TEntity>()}=ANY([{idsString}])";
 
             var rowEffect = await dbSet.WhereWithExist(condition)
-                                           .ExecuteUpdateAsync(setPropCalls => setPropCalls.SetProperty(accessPropertyDelegate, true));
+                                       .ExecuteUpdateAsync(setPropCalls => setPropCalls.SetProperty(accessPropertyDelegate, true));
         }
     }
 }

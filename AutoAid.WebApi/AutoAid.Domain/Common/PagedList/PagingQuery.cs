@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutoAid.Infrastructure.Repository.Helper
+namespace AutoAid.Domain.Common.PagedList
 {
     public class PagingQuery
     {
@@ -21,7 +21,7 @@ namespace AutoAid.Infrastructure.Repository.Helper
             }
             set
             {
-                _pageSize = (value > maxPageSize) ? maxPageSize : value;
+                _pageSize = value > maxPageSize ? maxPageSize : value;
             }
         }
 

@@ -1,4 +1,4 @@
-﻿using AutoAid.Infrastructure.Models;
+﻿using AutoAid.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace AutoAid.Infrastructure.DbContexts;
@@ -18,8 +18,6 @@ public partial class AutoAidLtdContext : DbContext
 
     public virtual DbSet<Customer> Customers { get; set; }
 
-    public virtual DbSet<DdlHistory> DdlHistories { get; set; }
-
     public virtual DbSet<EmergentRequest> EmergentRequests { get; set; }
 
     public virtual DbSet<EventType> EventTypes { get; set; }
@@ -30,9 +28,9 @@ public partial class AutoAidLtdContext : DbContext
 
     public virtual DbSet<GarageService> GarageServices { get; set; }
 
-    public virtual DbSet<PaymentType> PaymentTypes { get; set; }
-
     public virtual DbSet<Place> Places { get; set; }
+
+    //public virtual DbSet<PrismaMigration> PrismaMigrations { get; set; 
 
     public virtual DbSet<ServiceSchedule> ServiceSchedules { get; set; }
 
@@ -41,9 +39,6 @@ public partial class AutoAidLtdContext : DbContext
     public virtual DbSet<SparePartCategory> SparePartCategories { get; set; }
 
     public virtual DbSet<Vehicle> Vehicles { get; set; }
-
-    //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    //    => optionsBuilder.UseNpgsql(AppConfig.ConnectionStrings.DefaultConnection);
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -58,18 +53,18 @@ public partial class AutoAidLtdContext : DbContext
                 .HasColumnType("character varying")
                 .HasColumnName("access_token");
             entity.Property(e => e.CreatedDate)
-                .HasDefaultValueSql("now()")
-                .HasColumnType("timestamp without time zone")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp(6) without time zone")
                 .HasColumnName("created_date");
             entity.Property(e => e.CreatedUser).HasColumnName("created_user");
             entity.Property(e => e.Email)
                 .HasColumnType("character varying")
                 .HasColumnName("email");
             entity.Property(e => e.ExpAccessToken)
-                .HasColumnType("timestamp without time zone")
+                .HasColumnType("timestamp(6) without time zone")
                 .HasColumnName("exp_access_token");
             entity.Property(e => e.ExpRefreshTokenn)
-                .HasColumnType("timestamp without time zone")
+                .HasColumnType("timestamp(6) without time zone")
                 .HasColumnName("exp_refresh_tokenn");
             entity.Property(e => e.HashPassword)
                 .HasColumnType("character varying")
@@ -84,8 +79,8 @@ public partial class AutoAidLtdContext : DbContext
                 .HasColumnType("character varying")
                 .HasColumnName("refresh_token");
             entity.Property(e => e.UpdatedDate)
-                .HasDefaultValueSql("now()")
-                .HasColumnType("timestamp without time zone")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp(6) without time zone")
                 .HasColumnName("updated_date");
             entity.Property(e => e.UpdatedUser).HasColumnName("updated_user");
             entity.Property(e => e.Username)
@@ -124,24 +119,6 @@ public partial class AutoAidLtdContext : DbContext
                 .HasConstraintName("customer_account_id_fkey");
         });
 
-        modelBuilder.Entity<DdlHistory>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("ddl_history_pkey");
-
-            entity.ToTable("ddl_history");
-
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.ClientAddress).HasColumnName("client_address");
-            entity.Property(e => e.CommandTag).HasColumnName("command_tag");
-            entity.Property(e => e.DdlStatement).HasColumnName("ddl_statement");
-            entity.Property(e => e.ExecutionTime)
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("execution_time");
-            entity.Property(e => e.ObjectName).HasColumnName("object_name");
-            entity.Property(e => e.ObjectType).HasColumnName("object_type");
-            entity.Property(e => e.UserName).HasColumnName("user_name");
-        });
-
         modelBuilder.Entity<EmergentRequest>(entity =>
         {
             entity.HasKey(e => e.EmergentRequestId).HasName("emergent_request_pkey");
@@ -150,8 +127,8 @@ public partial class AutoAidLtdContext : DbContext
 
             entity.Property(e => e.EmergentRequestId).HasColumnName("emergent_request_id");
             entity.Property(e => e.CreatedDate)
-                .HasDefaultValueSql("now()")
-                .HasColumnType("timestamp without time zone")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp(6) without time zone")
                 .HasColumnName("created_date");
             entity.Property(e => e.CreatedUser).HasColumnName("created_user");
             entity.Property(e => e.CustomerId).HasColumnName("customer_id");
@@ -163,9 +140,11 @@ public partial class AutoAidLtdContext : DbContext
             entity.Property(e => e.Remark)
                 .HasMaxLength(255)
                 .HasColumnName("remark");
+            entity.Property(e => e.RoomUid).HasColumnName("room_uid");
+            entity.Property(e => e.Uid).HasColumnName("uid");
             entity.Property(e => e.UpdatedDate)
-                .HasDefaultValueSql("now()")
-                .HasColumnType("timestamp without time zone")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp(6) without time zone")
                 .HasColumnName("updated_date");
             entity.Property(e => e.UpdatedUser).HasColumnName("updated_user");
             entity.Property(e => e.VehicleId).HasColumnName("vehicle_id");
@@ -177,7 +156,6 @@ public partial class AutoAidLtdContext : DbContext
 
             entity.HasOne(d => d.Garage).WithMany(p => p.EmergentRequests)
                 .HasForeignKey(d => d.GarageId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("emergent_request_garage_id_fkey");
 
             entity.HasOne(d => d.Place).WithMany(p => p.EmergentRequests)
@@ -194,8 +172,8 @@ public partial class AutoAidLtdContext : DbContext
 
             entity.Property(e => e.EventTypeId).HasColumnName("event_type_id");
             entity.Property(e => e.CreatedDate)
-                .HasDefaultValueSql("now()")
-                .HasColumnType("timestamp without time zone")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp(6) without time zone")
                 .HasColumnName("created_date");
             entity.Property(e => e.CreatedUser).HasColumnName("created_user");
             entity.Property(e => e.Description).HasColumnName("description");
@@ -206,8 +184,8 @@ public partial class AutoAidLtdContext : DbContext
                 .HasDefaultValue(false)
                 .HasColumnName("is_deleted");
             entity.Property(e => e.UpdatedDate)
-                .HasDefaultValueSql("now()")
-                .HasColumnType("timestamp without time zone")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp(6) without time zone")
                 .HasColumnName("updated_date");
             entity.Property(e => e.UpdatedUser).HasColumnName("updated_user");
         });
@@ -226,8 +204,8 @@ public partial class AutoAidLtdContext : DbContext
                 .HasColumnType("character varying")
                 .HasColumnName("avatar_url");
             entity.Property(e => e.CreatedDate)
-                .HasDefaultValueSql("now()")
-                .HasColumnType("timestamp without time zone")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp(6) without time zone")
                 .HasColumnName("created_date");
             entity.Property(e => e.CreatedUser).HasColumnName("created_user");
             entity.Property(e => e.Email)
@@ -247,8 +225,8 @@ public partial class AutoAidLtdContext : DbContext
                 .HasColumnName("owner_id");
             entity.Property(e => e.PlaceId).HasColumnName("place_id");
             entity.Property(e => e.UpdatedDate)
-                .HasDefaultValueSql("now()")
-                .HasColumnType("timestamp without time zone")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp(6) without time zone")
                 .HasColumnName("updated_date");
             entity.Property(e => e.UpdatedUser).HasColumnName("updated_user");
 
@@ -267,8 +245,8 @@ public partial class AutoAidLtdContext : DbContext
             entity.Property(e => e.GarageAccountId).HasColumnName("garage_account_id");
             entity.Property(e => e.AccountId).HasColumnName("account_id");
             entity.Property(e => e.CreatedDate)
-                .HasDefaultValueSql("now()")
-                .HasColumnType("timestamp without time zone")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp(6) without time zone")
                 .HasColumnName("created_date");
             entity.Property(e => e.CreatedUser).HasColumnName("created_user");
             entity.Property(e => e.GarageId).HasColumnName("garage_id");
@@ -277,8 +255,8 @@ public partial class AutoAidLtdContext : DbContext
                 .HasColumnName("is_deleted");
             entity.Property(e => e.IsPrimaryAccount).HasColumnName("is_primary_account");
             entity.Property(e => e.UpdatedDate)
-                .HasDefaultValueSql("now()")
-                .HasColumnType("timestamp without time zone")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp(6) without time zone")
                 .HasColumnName("updated_date");
             entity.Property(e => e.UpdatedUser).HasColumnName("updated_user");
 
@@ -301,8 +279,8 @@ public partial class AutoAidLtdContext : DbContext
 
             entity.Property(e => e.GarageServiceId).HasColumnName("garage_service_id");
             entity.Property(e => e.CreatedDate)
-                .HasDefaultValueSql("now()")
-                .HasColumnType("timestamp without time zone")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp(6) without time zone")
                 .HasColumnName("created_date");
             entity.Property(e => e.CreatedUser).HasColumnName("created_user");
             entity.Property(e => e.Description).HasColumnName("description");
@@ -317,8 +295,8 @@ public partial class AutoAidLtdContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("service_name");
             entity.Property(e => e.UpdatedDate)
-                .HasDefaultValueSql("now()")
-                .HasColumnType("timestamp without time zone")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp(6) without time zone")
                 .HasColumnName("updated_date");
             entity.Property(e => e.UpdatedUser).HasColumnName("updated_user");
 
@@ -326,32 +304,6 @@ public partial class AutoAidLtdContext : DbContext
                 .HasForeignKey(d => d.GarageId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("garage_service_garage_id_fkey");
-        });
-
-        modelBuilder.Entity<PaymentType>(entity =>
-        {
-            entity.HasKey(e => e.PaymentTypeId).HasName("payment_type_pkey");
-
-            entity.ToTable("payment_type");
-
-            entity.Property(e => e.PaymentTypeId).HasColumnName("payment_type_id");
-            entity.Property(e => e.CreatedDate)
-                .HasDefaultValueSql("now()")
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("created_date");
-            entity.Property(e => e.CreatedUser).HasColumnName("created_user");
-            entity.Property(e => e.Description).HasColumnName("description");
-            entity.Property(e => e.IsDeleted)
-                .HasDefaultValue(false)
-                .HasColumnName("is_deleted");
-            entity.Property(e => e.PaymentName)
-                .HasMaxLength(255)
-                .HasColumnName("payment_name");
-            entity.Property(e => e.UpdatedDate)
-                .HasDefaultValueSql("now()")
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("updated_date");
-            entity.Property(e => e.UpdatedUser).HasColumnName("updated_user");
         });
 
         modelBuilder.Entity<Place>(entity =>
@@ -362,8 +314,8 @@ public partial class AutoAidLtdContext : DbContext
 
             entity.Property(e => e.PlaceId).HasColumnName("place_id");
             entity.Property(e => e.CreatedDate)
-                .HasDefaultValueSql("now()")
-                .HasColumnType("timestamp without time zone")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp(6) without time zone")
                 .HasColumnName("created_date");
             entity.Property(e => e.CreatedUser).HasColumnName("created_user");
             entity.Property(e => e.IsDeleted)
@@ -372,11 +324,37 @@ public partial class AutoAidLtdContext : DbContext
             entity.Property(e => e.Lat).HasColumnName("lat");
             entity.Property(e => e.Lng).HasColumnName("lng");
             entity.Property(e => e.UpdatedDate)
-                .HasDefaultValueSql("now()")
-                .HasColumnType("timestamp without time zone")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp(6) without time zone")
                 .HasColumnName("updated_date");
             entity.Property(e => e.UpdatedUser).HasColumnName("updated_user");
         });
+
+        //modelBuilder.Entity<PrismaMigration>(entity =>
+        //{
+        //    entity.HasKey(e => e.Id).HasName("_prisma_migrations_pkey");
+
+        //    entity.ToTable("_prisma_migrations");
+
+        //    entity.Property(e => e.Id)
+        //        .HasMaxLength(36)
+        //        .HasColumnName("id");
+        //    entity.Property(e => e.AppliedStepsCount)
+        //        .HasDefaultValue(0)
+        //        .HasColumnName("applied_steps_count");
+        //    entity.Property(e => e.Checksum)
+        //        .HasMaxLength(64)
+        //        .HasColumnName("checksum");
+        //    entity.Property(e => e.FinishedAt).HasColumnName("finished_at");
+        //    entity.Property(e => e.Logs).HasColumnName("logs");
+        //    entity.Property(e => e.MigrationName)
+        //        .HasMaxLength(255)
+        //        .HasColumnName("migration_name");
+        //    entity.Property(e => e.RolledBackAt).HasColumnName("rolled_back_at");
+        //    entity.Property(e => e.StartedAt)
+        //        .HasDefaultValueSql("now()")
+        //        .HasColumnName("started_at");
+        //});
 
         modelBuilder.Entity<ServiceSchedule>(entity =>
         {
@@ -386,14 +364,14 @@ public partial class AutoAidLtdContext : DbContext
 
             entity.Property(e => e.ServiceScheduleId).HasColumnName("service_schedule_id");
             entity.Property(e => e.CheckInTime)
-                .HasColumnType("timestamp without time zone")
+                .HasColumnType("timestamp(6) without time zone")
                 .HasColumnName("check_in_time");
             entity.Property(e => e.CheckOutTime)
-                .HasColumnType("timestamp without time zone")
+                .HasColumnType("timestamp(6) without time zone")
                 .HasColumnName("check_out_time");
             entity.Property(e => e.CreatedDate)
-                .HasDefaultValueSql("now()")
-                .HasColumnType("timestamp without time zone")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp(6) without time zone")
                 .HasColumnName("created_date");
             entity.Property(e => e.CreatedUser).HasColumnName("created_user");
             entity.Property(e => e.Description).HasColumnName("description");
@@ -408,8 +386,8 @@ public partial class AutoAidLtdContext : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("service_schedule_status");
             entity.Property(e => e.UpdatedDate)
-                .HasDefaultValueSql("now()")
-                .HasColumnType("timestamp without time zone")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp(6) without time zone")
                 .HasColumnName("updated_date");
             entity.Property(e => e.UpdatedUser).HasColumnName("updated_user");
             entity.Property(e => e.VehicleId).HasColumnName("vehicle_id");
@@ -435,8 +413,8 @@ public partial class AutoAidLtdContext : DbContext
 
             entity.Property(e => e.SparePartId).HasColumnName("spare_part_id");
             entity.Property(e => e.CreatedDate)
-                .HasDefaultValueSql("now()")
-                .HasColumnType("timestamp without time zone")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp(6) without time zone")
                 .HasColumnName("created_date");
             entity.Property(e => e.CreatedUser).HasColumnName("created_user");
             entity.Property(e => e.IsDeleted)
@@ -457,8 +435,8 @@ public partial class AutoAidLtdContext : DbContext
                 .HasPrecision(10, 2)
                 .HasColumnName("unit_price");
             entity.Property(e => e.UpdatedDate)
-                .HasDefaultValueSql("now()")
-                .HasColumnType("timestamp without time zone")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp(6) without time zone")
                 .HasColumnName("updated_date");
             entity.Property(e => e.UpdatedUser).HasColumnName("updated_user");
 
@@ -478,8 +456,8 @@ public partial class AutoAidLtdContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("category_name");
             entity.Property(e => e.CreatedDate)
-                .HasDefaultValueSql("now()")
-                .HasColumnType("timestamp without time zone")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp(6) without time zone")
                 .HasColumnName("created_date");
             entity.Property(e => e.CreatedUser).HasColumnName("created_user");
             entity.Property(e => e.Description).HasColumnName("description");
@@ -487,8 +465,8 @@ public partial class AutoAidLtdContext : DbContext
                 .HasDefaultValue(false)
                 .HasColumnName("is_deleted");
             entity.Property(e => e.UpdatedDate)
-                .HasDefaultValueSql("now()")
-                .HasColumnType("timestamp without time zone")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp(6) without time zone")
                 .HasColumnName("updated_date");
             entity.Property(e => e.UpdatedUser).HasColumnName("updated_user");
         });
@@ -510,7 +488,7 @@ public partial class AutoAidLtdContext : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("engine_number");
             entity.Property(e => e.EstYear)
-                .HasColumnType("timestamp without time zone")
+                .HasColumnType("timestamp(6) without time zone")
                 .HasColumnName("est_year");
             entity.Property(e => e.Make)
                 .HasMaxLength(50)

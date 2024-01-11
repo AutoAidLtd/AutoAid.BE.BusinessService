@@ -1,7 +1,5 @@
 ﻿using AutoAid.Domain.Common;
-using AutoAid.Domain.RepositoryHelper;
-using AutoAid.Infrastructure.Repository.Helper;
-using System.Linq.Expressions;
+using AutoAid.Domain.Common.PagedList;
 
 namespace AutoAid.Application.Repository
 {

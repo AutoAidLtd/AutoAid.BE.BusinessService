@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace AutoAid.Infrastructure.Models;
+﻿namespace AutoAid.Domain.Models;
 
 public partial class ServiceSchedule
 {

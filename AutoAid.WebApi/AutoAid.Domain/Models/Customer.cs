@@ -1,7 +1,8 @@
-﻿using System;
+﻿using AutoAid.Domain.Models;
+using System;
 using System.Collections.Generic;
 
-namespace AutoAid.Infrastructure.Models;
+namespace AutoAid.Domain.Models;
 
 public partial class Customer
 {

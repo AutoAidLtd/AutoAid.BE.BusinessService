@@ -2,9 +2,9 @@
 using AutoAid.Application.Service;
 using AutoAid.Bussiness.Common;
 using AutoAid.Domain.Common;
+using AutoAid.Domain.Common.PagedList;
 using AutoAid.Domain.Dto.Place;
-using AutoAid.Infrastructure.Models;
-using AutoAid.Infrastructure.Repository.Helper;
+using AutoAid.Domain.Models;
 
 namespace AutoAid.Bussiness.Service
 {

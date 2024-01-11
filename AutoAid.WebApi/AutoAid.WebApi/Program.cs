@@ -1,4 +1,5 @@
 using AutoAid.WebApi.Configuration;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 namespace AutoAid.WebApi
 {
@@ -11,11 +12,17 @@ namespace AutoAid.WebApi
             // Register appsettings.json global variables
             builder.Configuration.SettingsBinding();
 
+            builder.Services.AddMvc();
+
             // Add services to the container.
             builder.Services.AddControllers();
 
             // Register services to DI 
             builder.Services.AddServices();
+
+            // Register FluentValidation
+            builder.Services.AddFluentValidation();
+            //builder.Services.AddFluentValidationAutoValidation();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

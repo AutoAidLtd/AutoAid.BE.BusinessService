@@ -1,6 +1,6 @@
 ﻿using AutoAid.Domain.Common;
+using AutoAid.Domain.Common.PagedList;
 using AutoAid.Domain.Dto.Place;
-using AutoAid.Infrastructure.Repository.Helper;
 
 namespace AutoAid.Application.Service
 {

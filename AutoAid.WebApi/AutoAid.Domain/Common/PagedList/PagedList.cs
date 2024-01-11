@@ -1,5 +1,4 @@
-﻿using AutoAid.Infrastructure.Repository.Helper;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;

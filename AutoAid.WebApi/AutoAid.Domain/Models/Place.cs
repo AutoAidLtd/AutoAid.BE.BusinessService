@@ -1,18 +1,21 @@
-﻿namespace AutoAid.Infrastructure.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace AutoAid.Domain.Models;
 
 public partial class Place
 {
     public int PlaceId { get; set; }
 
-    public DateTime CreatedDate { get; set; } = DateTime.Now;
+    public DateTime CreatedDate { get; set; }
 
-    public DateTime UpdatedDate { get; set; } 
+    public DateTime UpdatedDate { get; set; }
 
     public int CreatedUser { get; set; }
 
     public int UpdatedUser { get; set; }
 
-    public bool IsDeleted { get; set; } = false;
+    public bool IsDeleted { get; set; }
 
     public double Lat { get; set; }
 
