@@ -1,5 +1,6 @@
 ﻿using AutoAid.Application.Repository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Reflection;
 
@@ -61,7 +62,6 @@ public class UnitOfWork : IUnitOfWork
         if (respository == null)
         {
             var classType = GetClassImplementingInterface(typeof(IGenericRepository<TEntity>));
-
             respository = Activator.CreateInstance(classType, _dbContext);
 
             ArgumentNullException.ThrowIfNull(respository, $"Cannot create instance of repository {classType.Name}");

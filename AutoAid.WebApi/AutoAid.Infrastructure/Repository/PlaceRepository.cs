@@ -17,7 +17,7 @@ namespace AutoAid.Infrastructure.Repository
             var lat = double.Parse(keySearch);
             var lng = double.Parse(keySearch);
 
-            return await dbSet.AsNoTracking()
+            return await _dbSet.AsNoTracking()
                         .WhereWithExist(p => p.Lat == lat || p.Lng == lng)  
                         .AddOrderByString(orderBy)
                         .ToPagedListAsync(pagingQuery);
@@ -28,11 +28,12 @@ namespace AutoAid.Infrastructure.Repository
             var lat = double.Parse(keySearch);
             var lng = double.Parse(keySearch);
 
-            return await dbSet.AsNoTracking()
+            return await _dbSet.AsNoTracking()
                         .WhereWithExist(p => p.Lat == lat || p.Lng == lng)
                         .AddOrderByString(orderBy)
                         .SelectWithField<Place, TResult>()
                         .ToPagedListAsync(pagingQuery);
+
         }
     }
 }

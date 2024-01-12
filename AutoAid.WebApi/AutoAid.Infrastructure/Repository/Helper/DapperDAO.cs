@@ -1,16 +1,32 @@
 ﻿using Dapper;
 using Npgsql;
 using System.Data;
+using static Dapper.SqlMapper;
 
 namespace AutoAid.Infrastructure.Repository.Helper
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2200:Rethrow to preserve stack details", Justification = "<Pending>")]
-    public static class DapperRepositoryHelpers
+    public class DapperDAO
     {
-        private static string ToPostgresStoredStatement(this string storedName, DynamicParameters param, string[] resultParams)
+        private readonly IDbConnection _dbConnection;
+        public DapperDAO(IDbConnection dbConnection)
         {
-            //DiagnosticListener diagnosticListener = Engine.ContainerManager.Resolve<DiagnosticListener>("Npgsql_Listener");
-            //diagnosticListener.Write("parameters", param);
+            _dbConnection = dbConnection;
+        }
+
+        private async Task Reconnect()
+        {
+            if (_dbConnection is NpgsqlConnection npgsqlConnection)
+            {
+                if (npgsqlConnection.State == ConnectionState.Closed || _dbConnection.State == ConnectionState.Broken)
+                {
+                    await npgsqlConnection.OpenAsync();
+                }
+            }
+        }
+
+        private string ToPostgresStoredStatement(string procedureName, DynamicParameters param, string[] resultParams)
+        {
             string empty = string.Empty;
             if (param != null)
             {
@@ -31,27 +47,21 @@ namespace AutoAid.Infrastructure.Repository.Helper
                 });
             }
 
-            return "CALL " + storedName + empty + "; " + fetchQuery;
+            return "CALL " + procedureName + empty + "; " + fetchQuery;
         }
 
-        private static void Reconnect(this IDbConnection connection)
-        {
-            NpgsqlConnection npgsqlConnection = connection as NpgsqlConnection;
-            if (npgsqlConnection.State == ConnectionState.Closed || connection.State == ConnectionState.Broken)
-            {
-                npgsqlConnection.Open();
-            }
-        }
-
-        public static async Task<IEnumerable<T>> QueryStoredProcPgSql<T>(this IDbConnection connection, 
+        public async Task<IEnumerable<T>> QueryStoredProcPgSql<T>(
             string procName, DynamicParameters parameters, string resultParam, IDbTransaction? tran = null)
         {
-            connection.Reconnect();
-            IDbTransaction transaction = ((tran == null) ? connection.BeginTransaction() : tran);
+            await Reconnect();
+            IDbTransaction transaction = tran ?? _dbConnection.BeginTransaction();
             try
             {
-                string query = procName.ToPostgresStoredStatement(parameters, new string[1] { resultParam });
-                SqlMapper.GridReader multi = await connection.QueryMultipleAsync(query, parameters, commandType: CommandType.Text, transaction: transaction, commandTimeout: 300);
+                string query = ToPostgresStoredStatement(procName, parameters, new string[1] { resultParam });
+                SqlMapper.GridReader multi = await _dbConnection.QueryMultipleAsync(query, parameters,
+                                                                                    commandType: CommandType.Text,
+                                                                                    transaction: transaction,
+                                                                                    commandTimeout: 300);
                 await multi.ReadAsync<object>();
                 IEnumerable<T> result = await multi.ReadAsync<T>();
                 if (tran == null)
@@ -65,7 +75,7 @@ namespace AutoAid.Infrastructure.Repository.Helper
             {
                 if (ex.Message.Contains("terminating connection due to administrator command"))
                 {
-                    return await connection.QueryStoredProcPgSql<T>(procName, parameters, resultParam, tran);
+                    return await QueryStoredProcPgSql<T>(procName, parameters, resultParam, tran);
                 }
 
                 transaction?.Rollback();
@@ -78,15 +88,18 @@ namespace AutoAid.Infrastructure.Repository.Helper
             }
         }
 
-        public static async Task<T?> QueryFirstStoredProcPgSql<T>(this IDbConnection connection, 
+        public async Task<T?> QueryFirstStoredProcPgSql<T>(
             string procName, DynamicParameters parameters, string resultParam, IDbTransaction? tran = null)
         {
-            connection.Reconnect();
-            IDbTransaction transaction = ((tran == null) ? connection.BeginTransaction() : tran);
+            await Reconnect();
+            IDbTransaction transaction = tran ?? _dbConnection.BeginTransaction();
             try
             {
-                string query = procName.ToPostgresStoredStatement(parameters, new string[1] { resultParam });
-                SqlMapper.GridReader multi = await connection.QueryMultipleAsync(query, parameters, commandType: CommandType.Text, transaction: transaction, commandTimeout: 300);
+                string query = ToPostgresStoredStatement(procName, parameters, new string[1] { resultParam });
+                GridReader multi = await _dbConnection.QueryMultipleAsync(query, parameters,
+                                                                commandType: CommandType.Text,
+                                                                transaction: transaction,
+                                                                commandTimeout: 300);
                 await multi.ReadAsync<object>();
                 IEnumerable<T> result = await multi.ReadAsync<T>();
                 if (tran == null)
@@ -100,7 +113,7 @@ namespace AutoAid.Infrastructure.Repository.Helper
             {
                 if (ex.Message.Contains("terminating connection due to administrator command"))
                 {
-                    return await connection.QueryFirstStoredProcPgSql<T>(procName, parameters, resultParam, tran);
+                    return await _dbConnection.QueryFirstStoredProcPgSql<T>(procName, parameters, resultParam, tran);
                 }
 
                 transaction?.Rollback();
@@ -113,23 +126,24 @@ namespace AutoAid.Infrastructure.Repository.Helper
             }
         }
 
-        public static async Task<SqlMapper.GridReader> QueryMultiStoredProcPgSql(this IDbConnection connection,
+        public async Task<SqlMapper.GridReader> QueryMultiStoredProcPgSql(
             string procName, DynamicParameters parameters, params string[] resultParams)
         {
-            connection.Reconnect();
+            await Reconnect();
             try
             {
-                string query = procName.ToPostgresStoredStatement(parameters, resultParams);
-                CommandType? commandType = CommandType.Text;
-                SqlMapper.GridReader result = await connection.QueryMultipleAsync(query, parameters, null, null, commandType);
+                string query = ToPostgresStoredStatement(procName, parameters, resultParams);
+                SqlMapper.GridReader result = await _dbConnection.QueryMultipleAsync(query, parameters, null, null, CommandType.Text);
+
                 await result.ReadAsync<object>();
+
                 return result;
             }
             catch (NpgsqlException ex)
             {
                 if (ex.Message.Contains("terminating connection due to administrator command"))
                 {
-                    return await connection.QueryMultiStoredProcPgSql(procName, parameters, resultParams);
+                    return await QueryMultiStoredProcPgSql(procName, parameters, resultParams);
                 }
 
                 throw ex;
@@ -140,17 +154,20 @@ namespace AutoAid.Infrastructure.Repository.Helper
             }
         }
 
-        public static async Task<int> ExecuteStoredProcPgSql(this IDbConnection connection, 
+        public async Task<int> ExecuteStoredProcPgSql(
             string procName, DynamicParameters parameters, string resultParam, IDbTransaction? tran = null)
         {
-            connection.Reconnect();
-            IDbTransaction transaction = ((tran == null) ? connection.BeginTransaction() : tran);
+            await Reconnect();
+            IDbTransaction transaction = tran ?? _dbConnection.BeginTransaction();
             try
             {
                 parameters.Add(resultParam, 0);
-                string query = procName.ToPostgresStoredStatement(parameters, null);
-                CommandType? commandType = CommandType.Text;
-                IEnumerable<int> result = await (await connection.QueryMultipleAsync(query, parameters, transaction, null, commandType)).ReadAsync<int>();
+
+                string query = ToPostgresStoredStatement(procName, parameters, null);
+
+                var gridReader = await _dbConnection.QueryMultipleAsync(query, parameters, transaction, null, CommandType.Text);
+                IEnumerable<int> result = await gridReader.ReadAsync<int>();
+
                 if (tran == null)
                 {
                     transaction.Commit();
@@ -162,7 +179,7 @@ namespace AutoAid.Infrastructure.Repository.Helper
             {
                 if (ex.Message.Contains("terminating connection due to administrator command"))
                 {
-                    return await connection.ExecuteStoredProcPgSql(procName, parameters, resultParam, tran);
+                    return await ExecuteStoredProcPgSql(procName, parameters, resultParam, tran);
                 }
 
                 transaction?.Rollback();
@@ -175,17 +192,19 @@ namespace AutoAid.Infrastructure.Repository.Helper
             }
         }
 
-        public static async Task<T> ExecuteStoredProcPgSql<T>(this IDbConnection connection, 
+        public async Task<T> ExecuteStoredProcPgSql<T>(
             string procName, DynamicParameters parameters, string resultParam, IDbTransaction? tran = null)
         {
-            connection.Reconnect();
-            IDbTransaction transaction = ((tran == null) ? connection.BeginTransaction() : tran);
+            await Reconnect();
+            IDbTransaction transaction = tran ?? _dbConnection.BeginTransaction();
             try
             {
                 parameters.Add(resultParam, default(T));
-                string query = procName.ToPostgresStoredStatement(parameters, null);
-                CommandType? commandType = CommandType.Text;
-                IEnumerable<T> result = await (await connection.QueryMultipleAsync(query, parameters, transaction, null, commandType)).ReadAsync<T>();
+
+                string query = ToPostgresStoredStatement(procName, parameters, null);
+                var gridReader = await _dbConnection.QueryMultipleAsync(query, parameters, transaction, null, CommandType.Text);
+                IEnumerable<T> result = await gridReader.ReadAsync<T>();
+
                 if (tran == null)
                 {
                     transaction.Commit();
@@ -197,7 +216,7 @@ namespace AutoAid.Infrastructure.Repository.Helper
             {
                 if (ex.Message.Contains("terminating connection due to administrator command"))
                 {
-                    return await connection.ExecuteStoredProcPgSql<T>(procName, parameters, resultParam, tran);
+                    return await ExecuteStoredProcPgSql<T>(procName, parameters, resultParam, tran);
                 }
 
                 transaction?.Rollback();

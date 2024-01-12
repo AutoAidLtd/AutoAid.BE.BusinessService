@@ -3,6 +3,8 @@ using AutoAid.Domain.Common;
 using AutoAid.Infrastructure.Configuration;
 using AutoAid.Infrastructure.DbContexts;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
+using System.Data;
 
 namespace AutoAid.WebApi.Configuration
 {
@@ -21,7 +23,7 @@ namespace AutoAid.WebApi.Configuration
             {
                 options.UseNpgsql(AppConfig.ConnectionStrings.DefaultConnection)
                        .UseSnakeCaseNamingConvention();
-            });
+            }, contextLifetime: ServiceLifetime.Scoped);
 
             services.AddScoped<DbContext, AutoAidLtdContext>();
         }
