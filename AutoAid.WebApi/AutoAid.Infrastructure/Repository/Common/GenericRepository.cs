@@ -10,7 +10,7 @@ namespace AutoAid.Infrastructure.Repository
     public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
     {
         private readonly IDbConnection _dbConnection;
-        private DapperDAO? _dapperDAO = null;
+        private DapperClient? _dapperDAO = null;
 
         protected readonly DbContext _dbContext;
         protected readonly DbSet<TEntity> _dbSet;
@@ -22,7 +22,7 @@ namespace AutoAid.Infrastructure.Repository
             _dbSet = context.Set<TEntity>();
         }
 
-        protected DapperDAO DapperDAO => _dapperDAO ??= new DapperDAO(_dbConnection);
+        protected DapperClient DapperDAO => _dapperDAO ??= new DapperClient(_dbConnection);
 
         public async Task<TEntity?> FindAsync(int entityId)
         {

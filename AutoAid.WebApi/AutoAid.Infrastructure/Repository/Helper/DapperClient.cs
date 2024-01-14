@@ -6,10 +6,10 @@ using static Dapper.SqlMapper;
 namespace AutoAid.Infrastructure.Repository.Helper
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2200:Rethrow to preserve stack details", Justification = "<Pending>")]
-    public class DapperDAO
+    public class DapperClient
     {
         private readonly IDbConnection _dbConnection;
-        public DapperDAO(IDbConnection dbConnection)
+        public DapperClient(IDbConnection dbConnection)
         {
             _dbConnection = dbConnection;
         }
@@ -113,7 +113,7 @@ namespace AutoAid.Infrastructure.Repository.Helper
             {
                 if (ex.Message.Contains("terminating connection due to administrator command"))
                 {
-                    return await _dbConnection.QueryFirstStoredProcPgSql<T>(procName, parameters, resultParam, tran);
+                    return await QueryFirstStoredProcPgSql<T>(procName, parameters, resultParam, tran);
                 }
 
                 transaction?.Rollback();

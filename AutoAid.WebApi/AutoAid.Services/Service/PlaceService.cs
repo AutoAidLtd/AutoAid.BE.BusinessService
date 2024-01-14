@@ -1,11 +1,4 @@
-﻿using AutoAid.Application.Repository;
-using AutoAid.Application.Service;
-using AutoAid.Bussiness.Common;
-using AutoAid.Domain.Common;
-using AutoAid.Domain.Common.PagedList;
-using AutoAid.Domain.Dto.Place;
-using AutoAid.Domain.Models;
-
+﻿
 namespace AutoAid.Bussiness.Service
 {
     public class PlaceService : BaseService, IPlaceService

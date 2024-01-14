@@ -1,11 +1,7 @@
-﻿using AutoAid.Application.Service;
-using AutoAid.Bussiness.Service;
+﻿using AutoAid.Bussiness.Service;
+using Autofac;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace AutoAid.Bussiness.Configuration
 {
@@ -14,6 +10,15 @@ namespace AutoAid.Bussiness.Configuration
         public static void AddBussinessServices(this IServiceCollection services)
         {
             services.AddScoped<IPlaceService, PlaceService>();
+        }
+
+        public static void RegisterBussinessServices(this ContainerBuilder builder)
+        {
+            // register for services
+            builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
+               .Where(t => t.Name.EndsWith("Service"))
+               .AsImplementedInterfaces()
+               .InstancePerLifetimeScope();
         }
     }
 }

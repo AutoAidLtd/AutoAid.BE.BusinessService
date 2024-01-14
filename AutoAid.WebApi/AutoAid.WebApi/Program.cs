@@ -18,11 +18,17 @@ namespace AutoAid.WebApi
             builder.Services.AddControllers();
 
             // Register services to DI 
-            builder.Services.AddServices();
+            //builder.Services.AddServices();
+            builder.ConfigureAutofacContainer();
 
             // Register FluentValidation
             builder.Services.AddFluentValidation();
-            //builder.Services.AddFluentValidationAutoValidation();
+
+            //Config endpoints router
+            builder.Services.Configure<RouteOptions>(options =>
+            {
+                options.LowercaseUrls = true;
+            });
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

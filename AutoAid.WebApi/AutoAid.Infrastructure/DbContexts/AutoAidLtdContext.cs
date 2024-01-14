@@ -1,4 +1,4 @@
-﻿using AutoAid.Domain.Models;
+﻿using AutoAid.Domain.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace AutoAid.Infrastructure.DbContexts;
@@ -20,6 +20,8 @@ public partial class AutoAidLtdContext : DbContext
 
     public virtual DbSet<EmergentRequest> EmergentRequests { get; set; }
 
+    public virtual DbSet<EmergentRequestEvent> EmergentRequestEvents { get; set; }
+
     public virtual DbSet<EventType> EventTypes { get; set; }
 
     public virtual DbSet<Garage> Garages { get; set; }
@@ -30,7 +32,7 @@ public partial class AutoAidLtdContext : DbContext
 
     public virtual DbSet<Place> Places { get; set; }
 
-    //public virtual DbSet<PrismaMigration> PrismaMigrations { get; set; 
+    public virtual DbSet<PrismaMigration> PrismaMigrations { get; set; }
 
     public virtual DbSet<ServiceSchedule> ServiceSchedules { get; set; }
 
@@ -39,6 +41,10 @@ public partial class AutoAidLtdContext : DbContext
     public virtual DbSet<SparePartCategory> SparePartCategories { get; set; }
 
     public virtual DbSet<Vehicle> Vehicles { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseNpgsql("Host=postgres.wyvernpserver.tech;Port=5432;Database=auto_aid_ltd;Username=sa;Password=ThanhPhong2506;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -52,6 +58,9 @@ public partial class AutoAidLtdContext : DbContext
             entity.Property(e => e.AccessToken)
                 .HasColumnType("character varying")
                 .HasColumnName("access_token");
+            entity.Property(e => e.AccountRole)
+                .HasMaxLength(50)
+                .HasColumnName("account_role");
             entity.Property(e => e.CreatedDate)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("timestamp(6) without time zone")
@@ -162,6 +171,20 @@ public partial class AutoAidLtdContext : DbContext
                 .HasForeignKey(d => d.PlaceId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("emergent_request_place_id_fkey");
+        });
+
+        modelBuilder.Entity<EmergentRequestEvent>(entity =>
+        {
+            entity.HasKey(e => new { e.EmergentRequestId, e.EventId }).HasName("emergent_request_event_pk");
+
+            entity.ToTable("emergent_request_event", "app");
+
+            entity.Property(e => e.EmergentRequestId).HasColumnName("emergent_request_id");
+            entity.Property(e => e.EventId).HasColumnName("event_id");
+            entity.Property(e => e.TsCreated)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp(6) without time zone")
+                .HasColumnName("ts_created");
         });
 
         modelBuilder.Entity<EventType>(entity =>
@@ -330,31 +353,31 @@ public partial class AutoAidLtdContext : DbContext
             entity.Property(e => e.UpdatedUser).HasColumnName("updated_user");
         });
 
-        //modelBuilder.Entity<PrismaMigration>(entity =>
-        //{
-        //    entity.HasKey(e => e.Id).HasName("_prisma_migrations_pkey");
+        modelBuilder.Entity<PrismaMigration>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("_prisma_migrations_pkey");
 
-        //    entity.ToTable("_prisma_migrations");
+            entity.ToTable("_prisma_migrations");
 
-        //    entity.Property(e => e.Id)
-        //        .HasMaxLength(36)
-        //        .HasColumnName("id");
-        //    entity.Property(e => e.AppliedStepsCount)
-        //        .HasDefaultValue(0)
-        //        .HasColumnName("applied_steps_count");
-        //    entity.Property(e => e.Checksum)
-        //        .HasMaxLength(64)
-        //        .HasColumnName("checksum");
-        //    entity.Property(e => e.FinishedAt).HasColumnName("finished_at");
-        //    entity.Property(e => e.Logs).HasColumnName("logs");
-        //    entity.Property(e => e.MigrationName)
-        //        .HasMaxLength(255)
-        //        .HasColumnName("migration_name");
-        //    entity.Property(e => e.RolledBackAt).HasColumnName("rolled_back_at");
-        //    entity.Property(e => e.StartedAt)
-        //        .HasDefaultValueSql("now()")
-        //        .HasColumnName("started_at");
-        //});
+            entity.Property(e => e.Id)
+                .HasMaxLength(36)
+                .HasColumnName("id");
+            entity.Property(e => e.AppliedStepsCount)
+                .HasDefaultValue(0)
+                .HasColumnName("applied_steps_count");
+            entity.Property(e => e.Checksum)
+                .HasMaxLength(64)
+                .HasColumnName("checksum");
+            entity.Property(e => e.FinishedAt).HasColumnName("finished_at");
+            entity.Property(e => e.Logs).HasColumnName("logs");
+            entity.Property(e => e.MigrationName)
+                .HasMaxLength(255)
+                .HasColumnName("migration_name");
+            entity.Property(e => e.RolledBackAt).HasColumnName("rolled_back_at");
+            entity.Property(e => e.StartedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("started_at");
+        });
 
         modelBuilder.Entity<ServiceSchedule>(entity =>
         {

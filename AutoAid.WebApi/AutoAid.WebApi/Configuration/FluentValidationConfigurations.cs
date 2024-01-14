@@ -10,7 +10,7 @@ using System.Net;
 
 namespace AutoAid.WebApi.Configuration
 {
-    public static class FluentValidationSettings
+    public static class FluentValidationConfigurations
     {
         public static void AddFluentValidation(this IServiceCollection services)
         {

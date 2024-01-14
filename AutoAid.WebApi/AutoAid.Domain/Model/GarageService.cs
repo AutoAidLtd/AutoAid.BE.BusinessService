@@ -1,8 +1,11 @@
-﻿namespace AutoAid.Domain.Models;
+﻿using System;
+using System.Collections.Generic;
 
-public partial class ServiceSchedule
+namespace AutoAid.Domain.Model;
+
+public partial class GarageService
 {
-    public int ServiceScheduleId { get; set; }
+    public int GarageServiceId { get; set; }
 
     public DateTime CreatedDate { get; set; }
 
@@ -14,11 +17,7 @@ public partial class ServiceSchedule
 
     public bool IsDeleted { get; set; }
 
-    public int VehicleId { get; set; }
-
-    public DateTime CheckInTime { get; set; }
-
-    public DateTime CheckOutTime { get; set; }
+    public string ServiceName { get; set; } = null!;
 
     public string? Description { get; set; }
 
@@ -26,9 +25,5 @@ public partial class ServiceSchedule
 
     public int GarageId { get; set; }
 
-    public string ServiceScheduleStatus { get; set; } = null!;
-
     public virtual Garage Garage { get; set; } = null!;
-
-    public virtual Vehicle Vehicle { get; set; } = null!;
 }

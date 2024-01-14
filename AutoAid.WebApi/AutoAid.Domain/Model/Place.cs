@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace AutoAid.Domain.Models;
+namespace AutoAid.Domain.Model;
 
 public partial class Place
 {

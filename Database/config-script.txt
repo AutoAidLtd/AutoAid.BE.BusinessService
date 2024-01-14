@@ -1,0 +1,1 @@
+Scaffold-DbContext "Host=postgres.wyvernpserver.tech;Port=5432;Database=auto_aid_ltd;Username=sa;Password=ThanhPhong2506;" Npgsql.EntityFrameworkCore.PostgreSQL -OutputDir ../AutoAid.Domain/Models

@@ -1,4 +1,7 @@
-﻿namespace AutoAid.Domain.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace AutoAid.Domain.Model;
 
 public partial class Account
 {
@@ -29,6 +32,8 @@ public partial class Account
     public string? RefreshToken { get; set; }
 
     public DateTime? ExpRefreshTokenn { get; set; }
+
+    public string? AccountRole { get; set; }
 
     public virtual ICollection<Customer> Customers { get; set; } = new List<Customer>();
 
