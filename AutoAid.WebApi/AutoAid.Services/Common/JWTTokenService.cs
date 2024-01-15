@@ -33,8 +33,9 @@ namespace AutoAid.Bussiness.Common
                     new Claim(ClaimTypes.Email, data.Email ?? string.Empty),
                     new Claim(ClaimTypes.Name, data.FullName ?? string.Empty),
                     new Claim(ClaimTypes.MobilePhone, data.Phone ?? string.Empty),
-                    new Claim(ClaimTypes.Uri, data.AvatarUrl ?? string.Empty)
-                })
+                    new Claim(ClaimTypes.Uri, data.AvatarUrl ?? string.Empty),
+                }),
+                IssuedAt = DateTime.UtcNow
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -64,8 +65,6 @@ namespace AutoAid.Bussiness.Common
                 return null;
             }
         }
-
-
 
         #region Private Methods
 
