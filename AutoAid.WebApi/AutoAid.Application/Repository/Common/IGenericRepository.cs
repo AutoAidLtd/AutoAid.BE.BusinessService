@@ -1,5 +1,4 @@
-﻿using AutoAid.Domain.Common;
-using AutoAid.Domain.Common.PagedList;
+﻿using AutoAid.Domain.Common.PagedList;
 
 namespace AutoAid.Application.Repository
 {

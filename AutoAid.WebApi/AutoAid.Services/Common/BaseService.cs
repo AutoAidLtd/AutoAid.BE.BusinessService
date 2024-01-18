@@ -1,9 +1,4 @@
-﻿using AutoAid.Application.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Net;
 
 namespace AutoAid.Bussiness.Common
 {
@@ -15,6 +10,26 @@ namespace AutoAid.Bussiness.Common
         {
             _unitOfWork = unitOfWork;
         }
+
+        protected ApiResponse<T> Succsess<T>(T data = default(T), string? message = null)
+        {
+            return new ApiResponse<T>
+            {
+                Data = data,
+                StatusCode = HttpStatusCode.OK,
+                Message = message
+            };
+        }
+
+        protected ApiResponse<T> Failed<T>(string message, HttpStatusCode statusCode = HttpStatusCode.BadRequest)
+        {
+            return new ApiResponse<T>
+            {
+                StatusCode = statusCode,
+                Message = message
+            };
+        }
+
         #region Destructor
         private bool _disposed = false;
 

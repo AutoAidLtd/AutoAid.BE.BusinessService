@@ -1,4 +1,5 @@
 ﻿using AutoAid.Application.Service;
+using AutoAid.Domain.Common.PagedList;
 using AutoAid.Domain.Dto.Place;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,7 +21,14 @@ namespace AutoAid.WebApi.Controllers
         public async Task<IActionResult> CreatePlace(CreatePlaceDto createData)
         {
             var result = await _placeService.Create(createData);
-            return Ok(result);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> SearchPlace(string keySearch, PagingQuery paginQuery, string orderbyString)
+        {
+            var result = await _placeService.SearchPlace(keySearch, paginQuery, orderbyString);
+            return StatusCode((int)result.StatusCode, result);
         }
     }
 }

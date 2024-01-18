@@ -4,6 +4,6 @@ namespace AutoAid.Application.Firebase
 {
     public interface IFirebaseClient : IDisposable
     {
-        public FirebaseAuth? FirebaseAuth { get; }
+        public FirebaseAuth FirebaseAuth { get; }
     }
 }

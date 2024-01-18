@@ -13,24 +13,17 @@ public class FirebaseClient : IFirebaseClient
 
     public FirebaseClient()
     {
-         _app = FirebaseApp.Create(new AppOptions
+        _app = FirebaseApp.Create(new AppOptions
         {
             Credential = GoogleCredential.FromFile(AppConfig.FirebaseConfig.Path)
         });
     }
 
-    public FirebaseAuth? FirebaseAuth
+    public FirebaseAuth FirebaseAuth
     {
         get
         {
-            try
-            {
-                return _auth ??= FirebaseAuth.GetAuth(_app);
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            return _auth ??= FirebaseAuth.GetAuth(_app);
         }
 
     }

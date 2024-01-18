@@ -1,4 +1,5 @@
-﻿using AutoAid.Bussiness.Service;
+﻿using AutoAid.Application.Service.Common;
+using AutoAid.Bussiness.Service;
 using Autofac;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -19,6 +20,10 @@ namespace AutoAid.Bussiness.Configuration
                .Where(t => t.Name.EndsWith("Service"))
                .AsImplementedInterfaces()
                .InstancePerLifetimeScope();
+
+            builder.RegisterType<JWTTokenService>()
+                .As<ITokenService>().InstancePerLifetimeScope();
+            
         }
     }
 }

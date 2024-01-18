@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutoAid.Domain.Common
+namespace AutoAid.Domain.Common.PagedList
 {
     public interface IPagedList<TEntity> : IList<TEntity>
     {

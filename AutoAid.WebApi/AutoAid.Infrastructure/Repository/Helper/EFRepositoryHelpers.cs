@@ -1,5 +1,4 @@
-﻿using AutoAid.Domain.Common;
-using AutoAid.Domain.Common.PagedList;
+﻿using AutoAid.Domain.Common.PagedList;
 using LinqKit;
 using Mapster;
 using System.Linq.Dynamic.Core;
@@ -75,6 +74,7 @@ namespace AutoAid.Infrastructure.Repository.Helper
             PagingQuery pagingQuery)
             where TEntity : class
         {
+            pagingQuery ??= new PagingQuery();
             var pagedList = new PagedList<TEntity>();
             await pagedList.LoadDataAsync(query, pagingQuery);
             return pagedList;

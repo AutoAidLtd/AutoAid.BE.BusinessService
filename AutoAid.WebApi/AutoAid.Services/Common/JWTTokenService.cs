@@ -65,9 +65,5 @@ namespace AutoAid.Bussiness.Common
                 return null;
             }
         }
-
-        #region Private Methods
-
-        #endregion Private Methods
     }
 }

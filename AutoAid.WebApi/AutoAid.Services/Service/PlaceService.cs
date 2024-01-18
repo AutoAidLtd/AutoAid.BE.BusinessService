@@ -1,4 +1,6 @@
 ﻿
+using AutoAid.Application.Common;
+
 namespace AutoAid.Bussiness.Service
 {
     public class PlaceService : BaseService, IPlaceService
@@ -7,7 +9,7 @@ namespace AutoAid.Bussiness.Service
         {
         }
 
-        public async Task<bool> Create(CreatePlaceDto createData)
+        public async Task<ApiResponse<bool>> Create(CreatePlaceDto createData)
         {
             try
             {
@@ -17,25 +19,26 @@ namespace AutoAid.Bussiness.Service
                     Lng = createData.Lng,
                 });
 
-                return await _unitOfWork.SaveChangesAsync() > 0;
+                var exResult = await _unitOfWork.SaveChangesAsync() > 0;
+
+                return Succsess(exResult);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                return Failed<bool>(message: ex.GetExceptionMessage());
             }
         }
 
-        public async Task<IPagedList<PlaceDto>> SearchPlace(string keySearch, PagingQuery paginQuery, string orderbyString)
+        public async Task<ApiResponse<IPagedList<PlaceDto>>> SearchPlace(string keySearch, PagingQuery paginQuery, string orderbyString)
         {
             try
             {
-                var result = await _unitOfWork.Resolve<Place>()
-                                              .SearchAsync<PlaceDto>(keySearch, paginQuery, orderbyString);
-                return result;
+                var result = await _unitOfWork.Resolve<Place>().SearchAsync<PlaceDto>(keySearch, paginQuery, orderbyString);
+                return Succsess(result);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return null;
+                return Failed<IPagedList<PlaceDto>>(ex.GetExceptionMessage());
             }
         }
     }
