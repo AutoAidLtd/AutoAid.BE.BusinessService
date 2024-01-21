@@ -3,12 +3,12 @@ using AutoAid.Domain.Common.PagedList;
 using AutoAid.Infrastructure.Repository.Helper;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Data.Common;
 
 namespace AutoAid.Infrastructure.Repository
 {
     public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
     {
-        private readonly IDbConnection _dbConnection;
         private DapperClient? _dapperDAO = null;
 
         protected readonly DbContext _dbContext;
@@ -17,11 +17,12 @@ namespace AutoAid.Infrastructure.Repository
         public GenericRepository(DbContext context)
         {
             _dbContext = context;
-            _dbConnection = context.Database.GetDbConnection();
             _dbSet = context.Set<TEntity>();
         }
 
-        protected DapperClient DapperDAO => _dapperDAO ??= new DapperClient(_dbConnection);
+        private IDbConnection DbConnection => _dbContext.Database.GetDbConnection();
+
+        protected DapperClient DapperDAO => _dapperDAO ??= new DapperClient(DbConnection);
 
         public async Task<TEntity?> FindAsync(int entityId)
         {
@@ -52,7 +53,7 @@ namespace AutoAid.Infrastructure.Repository
         public async Task CreateAsync(params TEntity[] entities)
         {
             await _dbSet.AddRangeAsync(entities)
-                       .ConfigureAwait(false);
+                        .ConfigureAwait(false);
         }
 
         public async Task UpdateAsync(params TEntity[] entities)
@@ -68,7 +69,7 @@ namespace AutoAid.Infrastructure.Repository
             var condition = $"e.{EFRepositoryHelpers.GetPrimaryKeyName<TEntity>()}=ANY([{idsString}])";
 
             var rowEffect = await _dbSet.WhereWithExist(condition)
-                                       .ExecuteUpdateAsync(setPropCalls => setPropCalls.SetProperty(accessPropertyDelegate, true));
+                                        .ExecuteUpdateAsync(setPropCalls => setPropCalls.SetProperty(accessPropertyDelegate, true));
         }
     }
 }

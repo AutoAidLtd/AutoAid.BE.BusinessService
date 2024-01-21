@@ -18,7 +18,7 @@ namespace AutoAid.WebApi
             builder.Services.AddControllers();
 
             // Register services to DI 
-            //builder.Services.AddServices();
+            builder.Services.AddServices();
             builder.ConfigureAutofacContainer();
 
             // Register FluentValidation

@@ -21,20 +21,22 @@ namespace AutoAid.Bussiness.Common
 
         public string Encode(GenerateTokenReq data)
         {
+            var claimIdentity = new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, data.Id),
+                new Claim(ClaimTypes.Email, data.Email ?? string.Empty),
+                new Claim(ClaimTypes.Name, data.FullName ?? string.Empty),
+                new Claim(ClaimTypes.MobilePhone, data.Phone ?? string.Empty),
+                new Claim(ClaimTypes.Uri, data.AvatarUrl ?? string.Empty),
+            });
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Issuer = AppConfig.JwtSetting.ValidIssuer,
                 Audience = AppConfig.JwtSetting.ValidAudience,
-                Expires = DateTime.UtcNow.AddMinutes(1),
+                Expires = DateTime.UtcNow.AddHours(2),
                 SigningCredentials = _credentials,
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, data.Id),
-                    new Claim(ClaimTypes.Email, data.Email ?? string.Empty),
-                    new Claim(ClaimTypes.Name, data.FullName ?? string.Empty),
-                    new Claim(ClaimTypes.MobilePhone, data.Phone ?? string.Empty),
-                    new Claim(ClaimTypes.Uri, data.AvatarUrl ?? string.Empty),
-                }),
+                Subject = claimIdentity,
                 IssuedAt = DateTime.UtcNow
             };
 

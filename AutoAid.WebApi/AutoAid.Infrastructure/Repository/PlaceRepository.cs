@@ -17,18 +17,19 @@ namespace AutoAid.Infrastructure.Repository
             var lng = double.Parse(keySearch);
 
             return await _dbSet.AsNoTracking()
-                        .WhereWithExist(p => p.Lat == lat || p.Lng == lng)  
+                        .WhereWithExist(p => p.Lat == lat || p.Lng == lng)
                         .AddOrderByString(orderBy)
                         .ToPagedListAsync(pagingQuery);
         }
 
-        public override async Task<IPagedList<TResult>> SearchAsync<TResult>(string keySearch, PagingQuery pagingQuery, string orderBy)
+        public override async Task<IPagedList<TResult>> SearchAsync<TResult>(string? keySearch, PagingQuery pagingQuery, string? orderBy)
         {
+            keySearch ??= string.Empty;
             var lat = double.Parse(keySearch);
             var lng = double.Parse(keySearch);
 
             return await _dbSet.AsNoTracking()
-                        .WhereWithExist(p => p.Lat == lat || p.Lng == lng)
+                        .WhereWithExist(p => string.IsNullOrEmpty(keySearch) || (p.Lat == lat || p.Lng == lng))
                         .AddOrderByString(orderBy)
                         .SelectWithField<Place, TResult>()
                         .ToPagedListAsync(pagingQuery);

@@ -1,4 +1,5 @@
 ﻿using AutoAid.Application.Service;
+using AutoAid.Domain.Common;
 using AutoAid.Domain.Common.PagedList;
 using AutoAid.Domain.Dto.Place;
 using Microsoft.AspNetCore.Mvc;
@@ -25,9 +26,9 @@ namespace AutoAid.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> SearchPlace(string keySearch, PagingQuery paginQuery, string orderbyString)
+        public async Task<IActionResult> SearchPlace([FromQuery] SearchBaseReq searchReq)
         {
-            var result = await _placeService.SearchPlace(keySearch, paginQuery, orderbyString);
+            var result = await _placeService.SearchPlace(searchReq.KeySearch, searchReq.PagingQuery, searchReq.OrderBy);
             return StatusCode((int)result.StatusCode, result);
         }
     }

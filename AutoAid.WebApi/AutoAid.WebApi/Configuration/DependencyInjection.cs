@@ -16,8 +16,8 @@ namespace AutoAid.WebApi.Configuration
         public static void AddServices(this IServiceCollection services)
         {
             services.AddDbContext();
-            services.AddInfrastructureServices();
-            services.AddBussinessServices();
+            //services.AddInfrastructureServices();
+            //services.AddBussinessServices();
         }
 
         public static void AddDbContext(this IServiceCollection services)

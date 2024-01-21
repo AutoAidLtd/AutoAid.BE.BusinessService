@@ -7,6 +7,6 @@ namespace AutoAid.Application.Service
     public interface IPlaceService : IDisposable
     {
         Task<ApiResponse<bool>> Create(CreatePlaceDto createData);
-        Task<ApiResponse<IPagedList<PlaceDto>>> SearchPlace(string keySearch, PagingQuery paginQuery, string orderbyString);
+        Task<ApiResponse<IPagedList<PlaceDto>>> SearchPlace(string? keySearch, PagingQuery paginQuery, string? orderbyString);
     }
 }

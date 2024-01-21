@@ -29,7 +29,7 @@ namespace AutoAid.Bussiness.Service
             }
         }
 
-        public async Task<ApiResponse<IPagedList<PlaceDto>>> SearchPlace(string keySearch, PagingQuery paginQuery, string orderbyString)
+        public async Task<ApiResponse<IPagedList<PlaceDto>>> SearchPlace(string? keySearch, PagingQuery paginQuery, string? orderbyString)
         {
             try
             {

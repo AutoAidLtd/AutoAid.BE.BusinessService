@@ -32,7 +32,7 @@ namespace AutoAid.WebApi.Configuration
                 // Enable validation for parameters bound from `BindingSource.Query` binding sources.
                 configuration.EnableQueryBindingSourceAutomaticValidation = true;
 
-                // Enable validation for parameters bound from `BindingSource.Path` binding sources.
+                // Enable validation for parameters bound from `BindingSource.DefaultPath` binding sources.
                 configuration.EnablePathBindingSourceAutomaticValidation = true;
 
                 // Enable validation for parameters bound from 'BindingSource.Custom' binding sources.

@@ -54,15 +54,15 @@ namespace AutoAid.Infrastructure.Repository.Helper
             return query.Select(selector);
         }
 
-        public static IQueryable<TEntity> AddOrderByString<TEntity>(this IQueryable<TEntity> query, string orderByString)
+        public static IQueryable<TEntity> AddOrderByString<TEntity>(this IQueryable<TEntity> query, string? orderByString)
         {
+            if (string.IsNullOrEmpty(orderByString))
+                return query;
+
             ArgumentNullException.ThrowIfNull(query, nameof(query));
 
             if (Regex.Match(orderByString, "^\\s*\\w+\\s*:\\s*(asc|desc)\\s*(?:,\\s*\\w+\\s*:\\s*(asc|desc)\\s*)*$\r\n").Success)
                 throw new ArgumentException("orderByString is invalid formmat");
-
-            if(string.IsNullOrEmpty(orderByString))
-                return query;
 
             var orderbyStringFmoratted = orderByString.Replace(":", " ");
 

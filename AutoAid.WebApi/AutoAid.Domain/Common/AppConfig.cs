@@ -10,7 +10,7 @@
     }
     public class FirebaseConfig
     {
-        public string Path { get; set; }
+        public string DefaultPath { get; set; } = null!;
     }
 
     public class ConnectionStrings

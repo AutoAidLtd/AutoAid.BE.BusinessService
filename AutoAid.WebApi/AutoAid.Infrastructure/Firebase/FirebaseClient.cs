@@ -9,21 +9,23 @@ namespace AutoAid.Infrastructure.Firebase;
 public class FirebaseClient : IFirebaseClient
 {
     private FirebaseAuth? _auth;
-    private readonly FirebaseApp _app;
+    private FirebaseApp? _app;
 
     public FirebaseClient()
     {
-        _app = FirebaseApp.Create(new AppOptions
-        {
-            Credential = GoogleCredential.FromFile(AppConfig.FirebaseConfig.Path)
-        });
     }
+
+    private FirebaseApp App => _app ??= FirebaseApp.Create(new AppOptions
+    {
+        Credential = GoogleCredential.FromFile(AppConfig.FirebaseConfig.DefaultPath)
+    });
+
 
     public FirebaseAuth FirebaseAuth
     {
         get
         {
-            return _auth ??= FirebaseAuth.GetAuth(_app);
+            return _auth ??= FirebaseAuth.GetAuth(App);
         }
 
     }
@@ -38,7 +40,7 @@ public class FirebaseClient : IFirebaseClient
 
         if (disposing)
         {
-            _app.Delete();
+            _app?.Delete();
         }
 
         _isDisposed = true;
