@@ -535,3 +535,5 @@ FodyWeavers.xsd
 /AutoAid.WebApi/AutoAid.WebApi/appsettings.json
 /AutoAid.WebApi/AutoAid.WebApi/firebase.json
 /AutoAid.WebApi/AutoAid.WebApi/firebase.json
+/Source/AutoAid.WebApi/firebase.json
+/Source/AutoAid.WebApi/appsettings.json
