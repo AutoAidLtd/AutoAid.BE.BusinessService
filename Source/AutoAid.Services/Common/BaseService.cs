@@ -11,7 +11,7 @@ namespace AutoAid.Bussiness.Common
             _unitOfWork = unitOfWork;
         }
 
-        protected ApiResponse<T> Succsess<T>(T data = default(T), string? message = null)
+        protected ApiResponse<T> Success<T>(T data = default(T), string? message = null)
         {
             return new ApiResponse<T>
             {

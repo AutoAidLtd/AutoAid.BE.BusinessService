@@ -49,6 +49,10 @@ public partial class Garage
     [Column("place_id")]
     public int PlaceId { get; set; }
 
+    [Column("name")]
+    [StringLength(255)]
+    public string? Name { get; set; }
+
     [InverseProperty("Garage")]
     public virtual ICollection<EmergentRequest> EmergentRequests { get; set; } = new List<EmergentRequest>();
 

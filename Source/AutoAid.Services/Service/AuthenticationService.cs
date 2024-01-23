@@ -1,7 +1,6 @@
 ﻿using AutoAid.Application.Common;
 using AutoAid.Application.Firebase;
 using AutoAid.Application.Service.Common;
-using System.Security.Claims;
 
 namespace AutoAid.Bussiness.Service
 {
@@ -33,7 +32,7 @@ namespace AutoAid.Bussiness.Service
                     AvatarUrl = firebaseUser.PhotoUrl
                 });
 
-                return Succsess(token);
+                return Success(token);
             }
             catch (Exception ex)
             {
@@ -48,14 +47,14 @@ namespace AutoAid.Bussiness.Service
             var userUID = claims.FirstOrDefault(c => c.Type.Equals("nameid", StringComparison.OrdinalIgnoreCase));
 
             if (string.IsNullOrEmpty(userUID?.Value))
-                return Succsess(false);
+                return Success(false);
 
             var firebaseUser = await _firebaseClient.FirebaseAuth.GetUserAsync(userUID?.Value);
 
             if (firebaseUser == null)
-                return Succsess(false);
+                return Success(false);
 
-            return Succsess(true);
+            return Success(true);
         }
     }
 }

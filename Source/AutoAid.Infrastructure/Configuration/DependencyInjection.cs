@@ -1,7 +1,7 @@
 ﻿using AutoAid.Application.Firebase;
 using AutoAid.Application.Repository;
 using AutoAid.Infrastructure.Firebase;
-using AutoAid.Infrastructure.Repository;
+using AutoAid.Infrastructure.Repository.Common;
 using Autofac;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.Extensions.DependencyInjection;

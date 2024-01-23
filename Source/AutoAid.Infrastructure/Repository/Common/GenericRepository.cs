@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Data.Common;
 
-namespace AutoAid.Infrastructure.Repository
+namespace AutoAid.Infrastructure.Repository.Common
 {
     public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
     {
@@ -52,8 +52,7 @@ namespace AutoAid.Infrastructure.Repository
 
         public async Task CreateAsync(params TEntity[] entities)
         {
-            await _dbSet.AddRangeAsync(entities)
-                        .ConfigureAwait(false);
+            await _dbSet.AddRangeAsync(entities);
         }
 
         public async Task UpdateAsync(params TEntity[] entities)

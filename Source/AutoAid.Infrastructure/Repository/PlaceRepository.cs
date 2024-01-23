@@ -1,5 +1,6 @@
 ﻿using AutoAid.Domain.Common.PagedList;
 using AutoAid.Domain.Model;
+using AutoAid.Infrastructure.Repository.Common;
 using AutoAid.Infrastructure.Repository.Helper;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,9 +25,13 @@ namespace AutoAid.Infrastructure.Repository
 
         public override async Task<IPagedList<TResult>> SearchAsync<TResult>(string? keySearch, PagingQuery pagingQuery, string? orderBy)
         {
-            keySearch ??= string.Empty;
-            var lat = double.Parse(keySearch);
-            var lng = double.Parse(keySearch);
+            double lat = 0, lng = 0;
+
+            if (!string.IsNullOrEmpty(keySearch))
+            {
+                lat = double.Parse(keySearch);
+                lng = double.Parse(keySearch);
+            }
 
             return await _dbSet.AsNoTracking()
                         .WhereWithExist(p => string.IsNullOrEmpty(keySearch) || (p.Lat == lat || p.Lng == lng))

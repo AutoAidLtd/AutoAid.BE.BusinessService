@@ -58,9 +58,19 @@ public partial class Account
     [StringLength(50)]
     public string? AccountRole { get; set; }
 
+    [Column("firebase_uid")]
+    [StringLength(50)]
+    public string? FirebaseUid { get; set; }
+
     [InverseProperty("Account")]
     public virtual ICollection<Customer> Customers { get; set; } = new List<Customer>();
 
     [InverseProperty("Account")]
     public virtual ICollection<GarageAccount> GarageAccounts { get; set; } = new List<GarageAccount>();
+
+    [InverseProperty("Receive")]
+    public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+
+    [InverseProperty("User")]
+    public virtual ICollection<Participant> Participants { get; set; } = new List<Participant>();
 }

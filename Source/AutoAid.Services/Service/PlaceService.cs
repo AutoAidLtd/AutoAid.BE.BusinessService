@@ -21,7 +21,7 @@ namespace AutoAid.Bussiness.Service
 
                 var exResult = await _unitOfWork.SaveChangesAsync() > 0;
 
-                return Succsess(exResult);
+                return Success(exResult);
             }
             catch (Exception ex)
             {
@@ -34,7 +34,7 @@ namespace AutoAid.Bussiness.Service
             try
             {
                 var result = await _unitOfWork.Resolve<Place>().SearchAsync<PlaceDto>(keySearch, paginQuery, orderbyString);
-                return Succsess(result);
+                return Success(result);
             }
             catch (Exception ex)
             {

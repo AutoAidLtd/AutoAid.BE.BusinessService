@@ -1,10 +1,11 @@
 ﻿using AutoAid.Application.Repository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Reflection;
 
-namespace AutoAid.Infrastructure.Repository;
+namespace AutoAid.Infrastructure.Repository.Common;
 
 public class UnitOfWork : IUnitOfWork
 {
@@ -73,7 +74,7 @@ public class UnitOfWork : IUnitOfWork
 
     public TEntityRepository? Resolve<TEntity, TEntityRepository>()
         where TEntity : class
-        where TEntityRepository : IGenericRepository<TEntity> 
+        where TEntityRepository : IGenericRepository<TEntity>
     {
         var respository = _repositoryDictionary.GetValueOrDefault(typeof(TEntity).Name);
 
@@ -100,12 +101,14 @@ public class UnitOfWork : IUnitOfWork
     private Type GetClassImplementingInterface(Type interfaceType)
     {
         var genericType = interfaceType.GenericTypeArguments.First();
-
-        return Assembly.GetExecutingAssembly().GetTypes()
-                                .First(t => t.IsClass == true && t.IsAbstract == false
+        var type = Assembly.GetExecutingAssembly().GetTypes()
+                                .FirstOrDefault(t => t.IsClass == true && t.IsAbstract == false
                                         && (t.GetInterface(interfaceType.Name)
                                             ?.GetGenericArguments()
                                             ?.Any(a => a.Name == genericType.Name) ?? false));
+
+        ArgumentNullException.ThrowIfNull(type, $"Cannot find class implementing interface {interfaceType.Name}");
+        return type;
     }
 
     #region Destructor

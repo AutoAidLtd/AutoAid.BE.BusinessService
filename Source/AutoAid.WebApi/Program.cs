@@ -9,6 +9,9 @@ namespace AutoAid.WebApi
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+            AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
+
             // Register appsettings.json global variables
             builder.Configuration.SettingsBinding();
 

@@ -39,6 +39,14 @@ public partial class Customer
     [Column("account_id")]
     public int AccountId { get; set; }
 
+    [Column("avatar_url")]
+    [StringLength(255)]
+    public string? AvatarUrl { get; set; }
+
+    [Column("gender")]
+    [StringLength(25)]
+    public string? Gender { get; set; }
+
     [ForeignKey("AccountId")]
     [InverseProperty("Customers")]
     public virtual Account Account { get; set; } = null!;

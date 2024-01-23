@@ -57,8 +57,5 @@ public class FirebaseClient : IFirebaseClient
         Dispose(false);
     }
     #endregion Destructor
-
-
-
 }
 

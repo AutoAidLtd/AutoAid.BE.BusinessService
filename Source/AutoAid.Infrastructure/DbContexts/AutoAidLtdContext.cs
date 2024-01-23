@@ -18,6 +18,8 @@ public partial class AutoAidLtdContext : DbContext
 
     public virtual DbSet<Account> Accounts { get; set; }
 
+    public virtual DbSet<ChatChannel> ChatChannels { get; set; }
+
     public virtual DbSet<Customer> Customers { get; set; }
 
     public virtual DbSet<EmergentRequest> EmergentRequests { get; set; }
@@ -32,6 +34,12 @@ public partial class AutoAidLtdContext : DbContext
 
     public virtual DbSet<GarageService> GarageServices { get; set; }
 
+    public virtual DbSet<Message> Messages { get; set; }
+
+    public virtual DbSet<Notification> Notifications { get; set; }
+
+    public virtual DbSet<Participant> Participants { get; set; }
+
     public virtual DbSet<Place> Places { get; set; }
 
     public virtual DbSet<PrismaMigration> PrismaMigrations { get; set; }
@@ -44,6 +52,10 @@ public partial class AutoAidLtdContext : DbContext
 
     public virtual DbSet<Vehicle> Vehicles { get; set; }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseNpgsql("Host=wyvernp.id.vn;Port=5432;Database=auto_aid_ltd;Username=sa;Password=ThanhPhong2506;Trust Server Certificate=True;");
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Account>(entity =>
@@ -52,6 +64,14 @@ public partial class AutoAidLtdContext : DbContext
 
             entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.Property(e => e.IsDeleted).HasDefaultValue(false);
+            entity.Property(e => e.UpdatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+        });
+
+        modelBuilder.Entity<ChatChannel>(entity =>
+        {
+            entity.HasKey(e => e.ChannelId).HasName("chat_channel_pkey");
+
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.Property(e => e.UpdatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
         });
 
@@ -140,6 +160,40 @@ public partial class AutoAidLtdContext : DbContext
             entity.HasOne(d => d.Garage).WithMany(p => p.GarageServices)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("garage_service_garage_id_fkey");
+        });
+
+        modelBuilder.Entity<Message>(entity =>
+        {
+            entity.HasKey(e => e.MessageId).HasName("message_pkey");
+
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.UpdatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.HasOne(d => d.Channel).WithMany(p => p.Messages).HasConstraintName("message_channel_id_fkey");
+        });
+
+        modelBuilder.Entity<Notification>(entity =>
+        {
+            entity.HasKey(e => e.Uuid).HasName("notification_pkey");
+
+            entity.Property(e => e.Uuid).ValueGeneratedNever();
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.UpdatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.HasOne(d => d.Receive).WithMany(p => p.Notifications).HasConstraintName("notification_receive_id_fkey");
+        });
+
+        modelBuilder.Entity<Participant>(entity =>
+        {
+            entity.HasKey(e => new { e.ChannelId, e.UserId }).HasName("participant_pkey");
+
+            entity.Property(e => e.JoinedDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.ParticipantId).ValueGeneratedOnAdd();
+            entity.Property(e => e.UpdatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.HasOne(d => d.Channel).WithMany(p => p.Participants).HasConstraintName("participant_channel_id_fkey");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Participants).HasConstraintName("participant_user_id_fkey");
         });
 
         modelBuilder.Entity<Place>(entity =>
