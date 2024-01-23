@@ -72,7 +72,7 @@ public class UnitOfWork : IUnitOfWork
         return (IGenericRepository<TEntity>)respository;
     }
 
-    public TEntityRepository? Resolve<TEntity, TEntityRepository>()
+    public TEntityRepository Resolve<TEntity, TEntityRepository>()
         where TEntity : class
         where TEntityRepository : IGenericRepository<TEntity>
     {
@@ -100,12 +100,24 @@ public class UnitOfWork : IUnitOfWork
 
     private Type GetClassImplementingInterface(Type interfaceType)
     {
-        var genericType = interfaceType.GenericTypeArguments.First();
-        var type = Assembly.GetExecutingAssembly().GetTypes()
-                                .FirstOrDefault(t => t.IsClass == true && t.IsAbstract == false
-                                        && (t.GetInterface(interfaceType.Name)
-                                            ?.GetGenericArguments()
-                                            ?.Any(a => a.Name == genericType.Name) ?? false));
+        var genericType = interfaceType.GenericTypeArguments.FirstOrDefault();
+
+        Type? type = null;
+        if (genericType != null)
+        {
+            type = Assembly.GetExecutingAssembly().GetTypes()
+                               .FirstOrDefault(t => t.IsClass == true && t.IsAbstract == false
+                                       && (t.GetInterface(interfaceType.Name)
+                                           ?.GetGenericArguments()
+                                           ?.Any(a => a.Name == genericType.Name) ?? false));
+        }
+        else
+        {
+            type = Assembly.GetExecutingAssembly().GetTypes()
+                               .FirstOrDefault(t => t.IsClass == true && t.IsAbstract == false
+                                                                     && t.GetInterface(interfaceType.Name) != null);
+        }
+
 
         ArgumentNullException.ThrowIfNull(type, $"Cannot find class implementing interface {interfaceType.Name}");
         return type;

@@ -22,15 +22,19 @@ namespace AutoAid.Bussiness.Service
             try
             {
                 var firebaseUser = await _firebaseClient.FirebaseAuth.GetUserAsync(uid);
+                var account = await _unitOfWork.Resolve<Account, IAccountRepository>().GetAccountByFirebaseUID(uid);
+
+                if(firebaseUser == null || account == null)
+                    throw new ArgumentNullException("Can not get firebase user");
 
                 var token = _tokenService.Encode(new GenerateTokenReq
                 {
-                    Id = firebaseUser.Uid,
+                    Id = account.AccountId.ToString(),
                     Email = firebaseUser.Email,
                     FullName = firebaseUser.DisplayName,
                     Phone = firebaseUser.PhoneNumber,
                     AvatarUrl = firebaseUser.PhotoUrl
-                });
+                 });
 
                 return Success(token);
             }
@@ -38,20 +42,23 @@ namespace AutoAid.Bussiness.Service
             {
                 return Failed<string>(message: ex.GetExceptionMessage());
             }
-
         }
 
         public async Task<ApiResponse<bool>> ValidateAccessToken(string token)
         {
             var claims = _tokenService.Decode(token);
-            var userUID = claims.FirstOrDefault(c => c.Type.Equals("nameid", StringComparison.OrdinalIgnoreCase));
 
-            if (string.IsNullOrEmpty(userUID?.Value))
+            if (claims == null)
                 return Success(false);
 
-            var firebaseUser = await _firebaseClient.FirebaseAuth.GetUserAsync(userUID?.Value);
+            var claim = claims.FirstOrDefault(c => c.Type.Equals("nameid", StringComparison.OrdinalIgnoreCase));
 
-            if (firebaseUser == null)
+            if (string.IsNullOrEmpty(claim?.Value))
+                return Success(false);
+
+            var account = await _unitOfWork.Resolve<Account, IAccountRepository>().FindAsync(int.Parse(claim.Value));
+
+            if (account == null)
                 return Success(false);
 
             return Success(true);

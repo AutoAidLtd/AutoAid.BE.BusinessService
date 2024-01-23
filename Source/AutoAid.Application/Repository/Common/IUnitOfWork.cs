@@ -18,7 +18,7 @@ namespace AutoAid.Application.Repository
         IGenericRepository<TEntity> Resolve<TEntity>()
            where TEntity : class;
 
-        TEntityRepository? Resolve<TEntity, TEntityRepository>()
+        TEntityRepository Resolve<TEntity, TEntityRepository>()
             where TEntity : class
             where TEntityRepository : IGenericRepository<TEntity>;
     }
