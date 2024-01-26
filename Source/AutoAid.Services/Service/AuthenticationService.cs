@@ -71,6 +71,41 @@ namespace AutoAid.Bussiness.Service
             }
         }
 
+        public async Task<ApiResponse<bool>> SyncAccountWithFirebase()
+        {
+            try
+            {
+                var accounts = await _unitOfWork.Resolve<Account>().GetAllAsync();
+
+                foreach (var account in accounts)
+                {
+                    try
+                    {
+                        var firebaseUser = await _firebaseClient.FirebaseAuth.GetUserByEmailAsync(account.Email);
+
+                        if (firebaseUser is null)
+                            continue;
+
+                        account.FirebaseUid = firebaseUser.Uid;
+                    }
+                    catch (Exception)
+                    {
+
+                        continue;
+                    }
+                }
+
+                await _unitOfWork.Resolve<Account>().UpdateAsync(accounts.ToArray());
+                await _unitOfWork.SaveChangesAsync();
+
+                return Success(true);
+            }
+            catch (Exception ex)
+            {
+                return Failed<bool>(message: ex.GetExceptionMessage());
+            }
+        }
+
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);

@@ -39,5 +39,16 @@ namespace AutoAid.WebApi.Controllers
             return StatusCode((int)result.StatusCode, result);
 
         }
+
+        /// <summary>
+        /// Sync the user account with firebase
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("sync-account")]
+        public async Task<IActionResult> SyncAccountWithFirebase()
+        {
+            var result = await _authenticationService.SyncAccountWithFirebase();
+            return StatusCode((int)result.StatusCode, result);
+        }
     }
 }
