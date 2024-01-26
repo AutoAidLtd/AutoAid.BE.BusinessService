@@ -24,7 +24,7 @@ namespace AutoAid.Bussiness.Service
                 var firebaseUser = await _firebaseClient.FirebaseAuth.GetUserAsync(uid);
                 var account = await _unitOfWork.Resolve<Account, IAccountRepository>().GetAccountByFirebaseUID(uid);
 
-                if(firebaseUser == null || account == null)
+                if (firebaseUser == null || account == null)
                     throw new ArgumentNullException("Can not get firebase user");
 
                 var token = _tokenService.Encode(new GenerateTokenReq
@@ -34,7 +34,7 @@ namespace AutoAid.Bussiness.Service
                     FullName = firebaseUser.DisplayName,
                     Phone = firebaseUser.PhoneNumber,
                     AvatarUrl = firebaseUser.PhotoUrl
-                 });
+                });
 
                 return Success(token);
             }
@@ -46,22 +46,39 @@ namespace AutoAid.Bussiness.Service
 
         public async Task<ApiResponse<bool>> ValidateAccessToken(string token)
         {
-            var claims = _tokenService.Decode(token);
+            try
+            {
+                var claims = _tokenService.Decode(token);
 
-            if (claims == null)
-                return Success(false);
+                if (claims == null)
+                    return Success(false);
 
-            var claim = claims.FirstOrDefault(c => c.Type.Equals("nameid", StringComparison.OrdinalIgnoreCase));
+                var claim = claims.FirstOrDefault(c => c.Type.Equals("nameid", StringComparison.OrdinalIgnoreCase));
 
-            if (string.IsNullOrEmpty(claim?.Value))
-                return Success(false);
+                if (string.IsNullOrEmpty(claim?.Value))
+                    return Success(false);
 
-            var account = await _unitOfWork.Resolve<Account, IAccountRepository>().FindAsync(int.Parse(claim.Value));
+                var account = await _unitOfWork.Resolve<Account, IAccountRepository>().FindAsync(int.Parse(claim.Value));
 
-            if (account == null)
-                return Success(false);
+                if (account == null)
+                    return Success(false);
 
-            return Success(true);
+                return Success(true);
+            }
+            catch (Exception ex)
+            {
+                return Failed<bool>(message: ex.GetExceptionMessage());
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            if (disposing)
+            {
+                _tokenService?.Dispose();
+                _firebaseClient?.Dispose();
+            }
         }
     }
 }

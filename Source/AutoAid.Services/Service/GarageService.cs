@@ -20,13 +20,13 @@ namespace AutoAid.Bussiness.Service
             try
             {
                 var account = req.Adapt<Account>();
-                account.AccountRole = ACTOR.GARAGE.ToString();
-                account.CreatedUser = (int)ACTOR.SYSTEM;
+                account.AccountRole = Actor.GARAGE.ToString();
+                account.CreatedUser = (int)Actor.SYSTEM;
                 account.UpdatedDate = DateTime.UtcNow;
 
                 var garage = req.Adapt<Garage>();
-                garage.CreatedUser = (int)ACTOR.SYSTEM;
-                garage.UpdatedUser = (int)ACTOR.SYSTEM;
+                garage.CreatedUser = (int)Actor.SYSTEM;
+                garage.UpdatedUser = (int)Actor.SYSTEM;
 
                 var place = new Place()
                 {

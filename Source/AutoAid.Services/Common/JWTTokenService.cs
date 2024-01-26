@@ -8,9 +8,9 @@ namespace AutoAid.Bussiness.Common
 {
     public class JWTTokenService : ITokenService
     {
-        private readonly SigningCredentials _credentials;
-        private readonly SymmetricSecurityKey _securityKey;
-        private readonly JwtSecurityTokenHandler _jwtSecurityTokenHandler;
+        private SigningCredentials _credentials;
+        private SymmetricSecurityKey _securityKey;
+        private JwtSecurityTokenHandler _jwtSecurityTokenHandler;
 
         public JWTTokenService()
         {
@@ -66,6 +66,27 @@ namespace AutoAid.Bussiness.Common
             {
                 return null;
             }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _securityKey = null;
+                _credentials = null;
+                _jwtSecurityTokenHandler = null;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~JWTTokenService()
+        {
+            Dispose(false);
         }
     }
 }

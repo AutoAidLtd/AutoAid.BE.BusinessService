@@ -20,9 +20,9 @@ namespace AutoAid.Bussiness.Service
             try
             {
                 var account = req.Adapt<Account>();
-                account.AccountRole = ACTOR.CUSTOMER.ToString();
-                account.CreatedUser = (int)ACTOR.SYSTEM;
-                account.UpdatedUser = (int)ACTOR.SYSTEM;
+                account.AccountRole = Actor.CUSTOMER.ToString();
+                account.CreatedUser = (int)Actor.SYSTEM;
+                account.UpdatedUser = (int)Actor.SYSTEM;
 
                 var customer = req.Adapt<Customer>();
 

@@ -7,5 +7,6 @@ namespace AutoAid.Application.Service.Common
     {
         string Encode(GenerateTokenReq data);
         IEnumerable<Claim> Decode(string token);
+        public void Dispose();
     }
 }
